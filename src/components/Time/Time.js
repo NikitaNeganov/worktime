@@ -11,35 +11,14 @@ class Time extends Component {
   audio = new Audio(music);
   erase = () => {
     this.props.eraseCookie("startHour");
-    this.props.eraseCookie("hoursTotal");
+    this.props.eraseCookie("startMinute");
+    this.props.eraseCookie("lengthHour");
+    this.props.eraseCookie("lengthMinute");
+    this.props.eraseCookie("lunchValue");
     this.pause();
     this.props.history.push("/home");
   };
-  update = () => {
-    this.props.getDate();
-    this.props.calculate();
-    this.forceUpdate();
-    const secondsTotal = this.props.hoursTotal * 60 * 60;
-    const secondsTo = secondsTotal - this.props.secondsDone;
-    if (
-      (secondsTo >= 480 && secondsTo <= 600) ||
-      this.props.hoursDone > this.props.hoursTotal
-    ) {
-      this.play();
-    }
-  };
-  componentDidMount() {
-    const cookieStart = this.props.readCookie("startHour");
-    const cookieTotal = this.props.readCookie("hoursTotal");
-    if (cookieStart && cookieTotal) {
-      this.props.onEnterHours(parseInt(cookieStart));
-      this.props.onEnterLength(parseInt(cookieTotal) - 1);
-    }
-    this.interval = setInterval(() => this.update(), 1000);
-  }
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
+
   onClearNameInner = () => {
     this.erase();
     this.props.onClearName();
@@ -65,6 +44,29 @@ class Time extends Component {
       this.audio.pause();
     }
   };
+  update = () => {
+    this.props.getDate();
+    this.props.calculate();
+    this.forceUpdate();
+  };
+  componentDidMount() {
+    const lengthHour = parseInt(this.props.readCookie("lengthHour"));
+    const lengthMinute = parseInt(this.props.readCookie("lengthMinute"));
+    const startHour = parseInt(this.props.readCookie("startHour"));
+    const startMinute = parseInt(this.props.readCookie("startMinute"));
+    const lunch = parseInt(this.props.readCookie("lunch"));
+    this.props.handleCookies(
+      lengthHour,
+      lengthMinute,
+      startHour,
+      startMinute,
+      lunch
+    );
+    this.interval = setInterval(() => this.update(), 1000);
+  }
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
   render() {
     const margin =
       document.body.clientHeight < 700
@@ -97,21 +99,22 @@ class Time extends Component {
         </button>
       </div>
     );
+    //#1 getting how much time done
     const currentTime = new Date().toLocaleString("ru-RU");
-    const fullHours = (this.props.hoursDone - 0.49).toFixed(0);
+    const fullHours = (this.props.hoursDone - 0.5).toFixed(0);
     const minutes =
       this.props.hoursDone > 1
         ? ((this.props.hoursDone % fullHours) * 60 - 0.5).toFixed(0)
         : (this.props.hoursDone * 60 - 0.5).toFixed(0);
-    const time = new Date();
-    const fullMinutes =
-      time.getMinutes() > 0 ? `${minutes.toString()} minutes` : "";
+    const fullMinutes = minutes > 0 ? `${minutes.toString()} minutes` : "";
     const displayTime =
       this.props.hoursDone < 1
         ? `${fullMinutes}` //`${(this.props.hoursDone * 60).toFixed(0)} minutes`
         : `${fullHours} hours ${fullMinutes}`;
     const shareDone = this.props.secondsDone / (this.props.hoursTotal * 3600);
     const percentageDone = +(shareDone * 100).toFixed(2);
+    //#1 finished
+    //#2 getting intro
     let intro = null;
     const name = this.props.readCookie("Name");
     if (name) {
@@ -125,13 +128,33 @@ class Time extends Component {
         </div>
       );
     }
-    const hoursLeft = fullMinutes
-      ? this.props.hoursTotal - (parseInt(fullHours) + 1)
-      : this.props.hoursTotal - parseInt(fullHours);
-    const minutesLeft = fullMinutes
-      ? `${60 - parseInt(fullMinutes)} minutes`
-      : "";
-    const displayLeft = `${hoursLeft} hours ${minutesLeft}`;
+    //#2 finished
+    //#3 getting time left
+    let hoursLeft = "";
+    if (this.props.lengthMinute !== this.props.startMinute) {
+      if (this.props.hoursTotal - fullHours > 1) {
+        hoursLeft =
+          (this.props.hoursTotal - fullHours - 0.5).toFixed(0) + " hours";
+      }
+    } else {
+      hoursLeft =
+        this.props.hoursTotal - this.props.hoursDone - 0.5 > 0
+          ? (this.props.hoursTotal - this.props.hoursDone - 0.5).toFixed(0)
+          : "";
+      if (hoursLeft === "1") {
+        hoursLeft += " hour";
+      } else {
+        hoursLeft += " hours";
+      }
+    }
+    const minuteSubtractor =
+      this.props.lengthMinute > 0 ? this.props.lengthMinute : 60;
+    const minutesLeft =
+      this.props.hoursDone - fullHours > 0
+        ? `${minuteSubtractor - parseInt(fullMinutes)} minutes`
+        : "";
+    const displayLeft = `${hoursLeft} ${minutesLeft}`;
+    //#3 finished
     const percColor =
       percentageDone > 50 ? { color: "green" } : { color: "lightcoral" };
     let working = (
@@ -141,8 +164,12 @@ class Time extends Component {
             {" "}
           </a>
           <p className={classes.Par} style={{ marginTop: "18px" }}>
-            You have spent at work {displayTime} out of {this.props.hoursTotal}{" "}
-            hours.
+            You have spent at work {displayTime} out of{" "}
+            {(this.props.hoursTotal - 0.5).toFixed(0)} hours
+            {this.props.lengthMinute > 0
+              ? ` ${this.props.lengthMinute} minutes`
+              : ""}
+            .
           </p>
           <p className={classes.Par} style={{ marginTop: "-1px" }}>
             That means <b>{displayLeft}</b> to go.
@@ -192,7 +219,7 @@ class Time extends Component {
           </button>
           <p className={classes.CookieText}>
             Site has saved your preferences (start time and workday length) in
-            cookies. In order to access Home page again and change your
+            cookies. In order to redirect to Home page and change your
             preferences click "Erase cookies".
           </p>
         </div>

@@ -1,36 +1,70 @@
 .Home {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .Input {
-    max-width: 40%;
-    border-style: solid;
-    border: 1px solid gray;
-    border-radius: 6px;
-    padding: 5px;
-    outline: none;
+  max-width: 60%;
+  border-style: solid;
+  border: 1px solid gray;
+  border-radius: 6px;
+  padding: 8px;
+  outline: none;
+  font-size: 13px;
 }
+
 .Button {
-    margin: 20px;
-    padding: 10px 20px;
-    border-radius: 8px;
-    box-sizing: border-box;
-    border-style: solid;
-    border: 1px solid gainsboro;
-    outline: none;
-    cursor: pointer;
-}.ButtonName {
-    margin: 0px;
-    padding: 10px 20px;
-    border-radius: 8px;
-    box-sizing: border-box;
-    border-style: solid;
-    border: 1px solid gainsboro;
-    outline: none;
-    cursor: pointer;
+  margin: 20px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  border-style: solid;
+  border: 1px solid gainsboro;
+  outline: none;
+  cursor: pointer;
+}
+.Button :disabled {
+  background-color: bisque;
+}
+.ButtonName {
+  margin: 0px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  border-style: solid;
+  border: 1px solid gainsboro;
+  outline: none;
+  cursor: pointer;
 }
 .ButtonContainer :hover {
-    background-color: cornflowerblue;
+  background-color: cornflowerblue;
+}
+.ToggleContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.ButtonContainer :disabled {
+  background-color: lightgray;
+  cursor: not-allowed;
+}
+.Start {
+  margin: 15px;
+  display: flex;
+  justify-content: center;
+  width: 100vw;
+}
+.InputWrapper {
+  width: 60px;
+  margin: 0px 10px;
+}
+input {
+  text-align: center;
+}
+.Length {
+  margin: 15px;
+  display: flex;
+  justify-content: center;
+  width: 100vw;
 }

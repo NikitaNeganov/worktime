@@ -3,20 +3,23 @@ import { Switch, Route, withRouter, Redirect } from "react-router-dom";
 
 import Home from "./components/Home/Home";
 import Time from "./components/Time/Time";
-import Test from "./components/Test/Test";
 import Layout from "./hoc/Layout/Layout";
 
 class App extends Component {
   state = {
     startHour: 9,
-    starMinute: 0,
-    workingHours: 8,
-    workingMinutes: 0,
+    startMinute: 0,
+    lengthHour: 8,
+    lengthMinute: 0,
     hoursDone: 0,
+    secondsDone: 0,
+    lunchValue: 1,
     hoursTotal: 9,
+    minutesTotal: 0,
     startDate: null,
     currentDate: null,
-    name: null
+    name: null,
+    lunch: true
   };
   createCookie = (name, value, days) => {
     let expires = "";
@@ -27,7 +30,6 @@ class App extends Component {
     }
     document.cookie = name + "=" + value + expires + "; path=/";
   };
-
   readCookie = name => {
     var nameEQ = name + "=";
     var ca = document.cookie.split(";");
@@ -38,7 +40,10 @@ class App extends Component {
     }
     return null;
   };
-
+  onClearName = () => {
+    this.eraseCookie("Name");
+    this.forceUpdate();
+  };
   eraseCookie = name => {
     this.createCookie(name, "", -1);
   };
@@ -48,95 +53,91 @@ class App extends Component {
       name
     });
   };
-  onEnterHours = e => {
+  getDate = () => {
+    const currentDate = new Date();
+    const c = currentDate;
+    const startDate = new Date(
+      c.getFullYear(),
+      c.getMonth(),
+      c.getDate(),
+      this.state.startHour,
+      this.state.startMinute,
+      0,
+      0
+    );
+    this.setState({ currentDate, startDate });
+  };
+  handleCookies = (lengthHour, lengthMinute, startHour, startMinute, lunch) => {
+    const lunchValue = lunch ? 1 : 0;
+    const hoursTotal = lengthHour + lunchValue + lengthMinute / 60;
+    const minutesTotal = lengthMinute;
     this.setState({
-      startHour: +e
+      startMinute,
+      startHour,
+      lengthMinute,
+      lengthHour,
+      lunch,
+      lunchValue,
+      hoursTotal,
+      minutesTotal
     });
   };
-  onEnterLength = e => {
-    const workingHours = +e;
-    const hoursTotal = workingHours + 1;
-    this.setState({
-      workingHours,
-      hoursTotal
-    });
+  createCookies = () => {
+    this.createCookie("startHour", this.state.startHour, 7);
+    this.createCookie("startMinute", this.state.startMinute, 7);
+    this.createCookie("lengthHour", this.state.lengthHour, 7);
+    this.createCookie("lengthMinute", this.state.lengthMinute, 7);
+    this.createCookie("lunchValue", this.state.lunchValue, 7);
   };
-  onEnterName = e => {
-    e.preventDefault();
-    const value = this.state.name;
-    this.createCookie("Name", value, 100);
-    this.forceUpdate();
-  };
-  onClearName = () => {
-    this.eraseCookie("Name");
-    this.forceUpdate();
+  calculate = () => {
+    const currentDate = new Date();
+    const { startDate } = this.state;
+    const secondsDone = (currentDate - startDate) / 1000;
+    const hoursDone = +(secondsDone / 3600).toFixed(3);
+    this.setState({ secondsDone, hoursDone });
   };
   handleButton = () => {
     this.getDate();
     this.calculate();
-    this.createCookie("startHour", this.state.startHour, 7);
-    this.createCookie("hoursTotal", this.state.hoursTotal, 7);
     const name = this.state.name ? this.state.name : "Stranger";
     if (!this.readCookie("Name")) {
       this.createCookie("Name", name, 7);
     }
     this.props.history.push("/time#intro");
   };
-  getDate = () => {
-    const currentDate = new Date();
-    const startDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      currentDate.getDate(),
-      this.state.startHour,
-      this.state.starMinute,
-      0,
-      0
-    );
-    const secondsDone = (currentDate - startDate) / 1000;
-    const displayDate = currentDate.toString().slice(0, -39);
-    this.setState({
-      displayDate,
-      currentDate,
-      startDate,
-      secondsDone
-    });
-  };
-  calculate = () => {
-    const currentDate = new Date();
-    const startDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      currentDate.getDate(),
-      this.state.startHour,
-      this.state.starMinute,
 
-      0,
-      0
-    );
-    const secondsDone = (currentDate - startDate) / 1000;
-    const hoursDone = +(secondsDone / 3600).toFixed(3);
+  handleSubmit = ({
+    startHour,
+    startMinute,
+    lengthHour,
+    lengthMinute,
+    lunch
+  }) => {
+    const lunchValue = lunch ? 1 : 0;
+    const hoursTotal = lengthHour + lunchValue + lengthMinute / 60;
+    const minutesTotal = lengthMinute;
     this.setState({
-      secondsDone,
-      hoursDone
-    });
-  };
-  handleCookies = (startHour, hoursTotal) => {
-    this.setState({
+      startMinute,
       startHour,
-      hoursTotal
+      lengthMinute,
+      lengthHour,
+      lunch,
+      lunchValue,
+      hoursTotal,
+      minutesTotal
     });
-  };
-  componentDidMount() {
+    console.log(this.state);
     this.getDate();
+    this.createCookies();
     this.calculate();
-  }
+    this.props.history.push("/time#intro");
+  };
+  componentDidMount() {}
   render() {
     //this.eraseCookie('Name')
     const myHome = props => {
       return (
         <Home
-          handleCookies={this.handleCookies}
           handleButton={this.handleButton}
           onClearName={this.onClearName}
           readCookie={this.readCookie}
@@ -144,6 +145,7 @@ class App extends Component {
           onEnterName={this.onEnterName}
           onEnterHours={this.onEnterHours}
           onEnterLength={this.onEnterLength}
+          handleSubmit={this.handleSubmit}
           {...this.state}
           {...props}
         />
@@ -152,6 +154,7 @@ class App extends Component {
     const myTime = props => {
       return (
         <Time
+          handleCookies={this.handleCookies}
           readCookie={this.readCookie}
           eraseCookie={this.eraseCookie}
           onClearName={this.onClearName}
@@ -164,21 +167,7 @@ class App extends Component {
         />
       );
     };
-    const myTest = props => {
-      return (
-        <Test
-          readCookie={this.readCookie}
-          eraseCookie={this.eraseCookie}
-          onClearName={this.onClearName}
-          onEnterHours={this.onEnterHours}
-          onEnterLength={this.onEnterLength}
-          getDate={this.getDate}
-          calculate={this.calculate}
-          {...this.state}
-          {...props}
-        />
-      );
-    };
+
     let redirect = () => <Redirect to="/time" />;
     if (!this.readCookie("startHour")) {
       redirect = () => <Redirect to="/home" />;
@@ -190,7 +179,6 @@ class App extends Component {
             <Route path="/" exact render={redirect} />
             <Route path="/home" render={myHome} />
             <Route path="/time" render={myTime} />
-            <Route path="/test" render={myTest} />
           </Switch>
         </Layout>
       </div>
