@@ -1,0 +1,36 @@
+.Home {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.Input {
+    max-width: 40%;
+    border-style: solid;
+    border: 1px solid gray;
+    border-radius: 6px;
+    padding: 5px;
+    outline: none;
+}
+.Button {
+    margin: 20px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-sizing: border-box;
+    border-style: solid;
+    border: 1px solid gainsboro;
+    outline: none;
+    cursor: pointer;
+}.ButtonName {
+    margin: 0px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-sizing: border-box;
+    border-style: solid;
+    border: 1px solid gainsboro;
+    outline: none;
+    cursor: pointer;
+}
+.ButtonContainer :hover {
+    background-color: cornflowerblue;
+}
