@@ -13,13 +13,13 @@ class App extends Component {
     lengthMinute: 0,
     hoursDone: 0,
     secondsDone: 0,
-    lunchValue: 1,
+    lunchValue: 0,
     hoursTotal: 9,
     minutesTotal: 0,
     startDate: null,
     currentDate: null,
     name: null,
-    lunch: true
+    lunch: false
   };
   createCookie = (name, value, days) => {
     let expires = "";
@@ -53,6 +53,12 @@ class App extends Component {
       name
     });
   };
+  onEnterName = e => {
+    e.preventDefault();
+    const value = this.state.name;
+    this.createCookie("Name", value, 100);
+    this.forceUpdate();
+  };
   getDate = () => {
     const currentDate = new Date();
     const c = currentDate;
@@ -67,8 +73,15 @@ class App extends Component {
     );
     this.setState({ currentDate, startDate });
   };
-  handleCookies = (lengthHour, lengthMinute, startHour, startMinute, lunch) => {
-    const lunchValue = lunch ? 1 : 0;
+  handleCookies = (
+    lengthHour,
+    lengthMinute,
+    startHour,
+    startMinute,
+    lunchValue
+  ) => {
+    console.log(lengthHour, lengthMinute, startHour, startMinute, lunchValue);
+    const lunch = lunchValue === 1 ? true : false;
     const hoursTotal = lengthHour + lunchValue + lengthMinute / 60;
     const minutesTotal = lengthMinute;
     this.setState({
@@ -76,8 +89,8 @@ class App extends Component {
       startHour,
       lengthMinute,
       lengthHour,
-      lunch,
       lunchValue,
+      lunch,
       hoursTotal,
       minutesTotal
     });
@@ -116,21 +129,24 @@ class App extends Component {
     const lunchValue = lunch ? 1 : 0;
     const hoursTotal = lengthHour + lunchValue + lengthMinute / 60;
     const minutesTotal = lengthMinute;
-    this.setState({
-      startMinute,
-      startHour,
-      lengthMinute,
-      lengthHour,
-      lunch,
-      lunchValue,
-      hoursTotal,
-      minutesTotal
-    });
-    console.log(this.state);
-    this.getDate();
-    this.createCookies();
-    this.calculate();
-    this.props.history.push("/time#intro");
+    this.setState(
+      {
+        startMinute,
+        startHour,
+        lengthMinute,
+        lengthHour,
+        lunch,
+        lunchValue,
+        hoursTotal,
+        minutesTotal
+      },
+      () => {
+        this.getDate();
+        this.createCookies();
+        this.calculate();
+        this.props.history.push("/time#intro");
+      }
+    );
   };
   componentDidMount() {}
   render() {

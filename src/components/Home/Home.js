@@ -4,9 +4,34 @@ import s from "../UI/Switch/Switch.module.css";
 import { Form, Field } from "react-final-form";
 
 const home = props => {
-  const sleep = ms => new Promise(res => setTimeout(res, ms));
+  let intro = (
+    <div style={{ width: "100%" }}>
+      <p>please, enter your name</p>
+      <form onSubmit={props.onEnterName}>
+        <input
+          className={classes.Input}
+          onChange={props.nameChangedHandler}
+          type="text"
+          value={props.name ? props.name : ""}
+          placeholder="Michael G. Scott"
+        />
+      </form>
+    </div>
+  );
+  const name = props.readCookie("Name");
+  if (name) {
+    const btn = name === "Stranger" ? "Enter your name" : "Change name";
+    intro = (
+      <div className={classes.Intro}>
+        <div />
+        <h3>Hello, {name}!</h3>
+        <button className={classes.ButtonName} onClick={props.onClearName}>
+          {btn}
+        </button>
+      </div>
+    );
+  }
   const showResults = async values => {
-    await sleep(300);
     const data = {};
     Object.keys(values).forEach(key => {
       if (key !== "lunch") {
@@ -19,13 +44,14 @@ const home = props => {
   };
   return (
     <div className={classes.Home}>
+      {intro}
       <Form
         onSubmit={showResults}
         initialValues={{
-          startMinute: 30,
-          startHour: 18,
-          lengthMinute: 50,
-          lengthHour: 2,
+          startMinute: 0,
+          startHour: 9,
+          lengthMinute: 0,
+          lengthHour: 8,
           lunch: true
         }}
       >
@@ -139,8 +165,7 @@ const home = props => {
                 Done!
               </button>
             </div>
-
-            <pre>{JSON.stringify(values, undefined, 2)}</pre>
+            {/*<pre>{JSON.stringify(values, 0, 2)}</pre>*/}
           </form>
         )}
       </Form>

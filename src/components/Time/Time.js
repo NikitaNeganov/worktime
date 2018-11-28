@@ -54,13 +54,13 @@ class Time extends Component {
     const lengthMinute = parseInt(this.props.readCookie("lengthMinute"));
     const startHour = parseInt(this.props.readCookie("startHour"));
     const startMinute = parseInt(this.props.readCookie("startMinute"));
-    const lunch = parseInt(this.props.readCookie("lunch"));
+    const lunchValue = parseInt(this.props.readCookie("lunchValue"));
     this.props.handleCookies(
       lengthHour,
       lengthMinute,
       startHour,
       startMinute,
-      lunch
+      lunchValue
     );
     this.interval = setInterval(() => this.update(), 1000);
   }
@@ -130,29 +130,12 @@ class Time extends Component {
     }
     //#2 finished
     //#3 getting time left
-    let hoursLeft = "";
-    if (this.props.lengthMinute !== this.props.startMinute) {
-      if (this.props.hoursTotal - fullHours > 1) {
-        hoursLeft =
-          (this.props.hoursTotal - fullHours - 0.5).toFixed(0) + " hours";
-      }
-    } else {
-      hoursLeft =
-        this.props.hoursTotal - this.props.hoursDone - 0.5 > 0
-          ? (this.props.hoursTotal - this.props.hoursDone - 0.5).toFixed(0)
-          : "";
-      if (hoursLeft === "1") {
-        hoursLeft += " hour";
-      } else {
-        hoursLeft += " hours";
-      }
-    }
-    const minuteSubtractor =
-      this.props.lengthMinute > 0 ? this.props.lengthMinute : 60;
+    const timeLeft = this.props.hoursTotal - this.props.hoursDone;
+    const remainder = timeLeft % 1;
+    const caption = (timeLeft - remainder).toFixed(0) === 1 ? "hour" : "hours";
+    const hoursLeft = `${timeLeft - remainder} ${caption}`;
     const minutesLeft =
-      this.props.hoursDone - fullHours > 0
-        ? `${minuteSubtractor - parseInt(fullMinutes)} minutes`
-        : "";
+      remainder !== 0 ? `${(remainder * 60 + 0.5).toFixed(0)} minutes` : "";
     const displayLeft = `${hoursLeft} ${minutesLeft}`;
     //#3 finished
     const percColor =
@@ -164,7 +147,7 @@ class Time extends Component {
             {" "}
           </a>
           <p className={classes.Par} style={{ marginTop: "18px" }}>
-            You have spent at work {displayTime} out of{" "}
+            You have spent at work {displayTime} out of <br />{" "}
             {(this.props.hoursTotal - 0.5).toFixed(0)} hours
             {this.props.lengthMinute > 0
               ? ` ${this.props.lengthMinute} minutes`

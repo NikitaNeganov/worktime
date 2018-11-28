@@ -4,6 +4,33 @@ import s from "../UI/Switch/Switch.module.css";
 import { Form, Field } from "react-final-form";
 
 const test = props => {
+  let intro = (
+    <div style={{ width: "100%" }}>
+      <p>please, enter your name</p>
+      <form onSubmit={props.onEnterName}>
+        <input
+          className={classes.Input}
+          onChange={props.nameChangedHandler}
+          type="text"
+          value={props.name ? props.name : ""}
+          placeholder="Michael G. Scott"
+        />
+      </form>
+    </div>
+  );
+  const name = props.readCookie("Name");
+  if (name) {
+    const btn = name === "Stranger" ? "Enter your name" : "Change name";
+    intro = (
+      <div className={classes.Intro}>
+        <div />
+        <h3>Hello, {name}!</h3>
+        <button className={classes.ButtonName} onClick={props.onClearName}>
+          {btn}
+        </button>
+      </div>
+    );
+  }
   const sleep = ms => new Promise(res => setTimeout(res, ms));
   const showResults = async values => {
     await sleep(300);
@@ -20,6 +47,7 @@ const test = props => {
   };
   return (
     <div className={classes.Home}>
+      {intro}
       <Form
         onSubmit={showResults}
         initialValues={{
