@@ -1,41 +1,50 @@
 .CookieText {
-    max-width: 50%;
-    text-align: center;
+  max-width: 50%;
+  text-align: center;
 }
-.CookieDiv{
+.CookieDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f4f4f4;
+}
+.PlotContainer {
+  background-color: #f4f4f4;
+}
+.Button {
+  margin: 5px;
+  padding: 8px 20px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  border-style: solid;
+  border: 1px solid gainsboro;
+  outline: none;
+  cursor: pointer;
+}
+@media (min-width: 801px) {
+  .CookieText {
+    position: fixed;
+    bottom: 3%;
+  }
+}
+@media (max-width: 800px) {
+  .Plot {
+    width: 100%;
+  }
+  .CookieText {
+    width: 90%;
+    max-width: 90%;
+  }
+  .Par {
+    width: 87%;
+    margin: 8px 0px;
+  }
+  .TimeCont {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #f4f4f4; 
-}
-.PlotContainer {
-    background-color: #f4f4f4;
-}
-.Button{
-    margin: 5px;
-    padding: 8px 20px;
-    border-radius: 8px;
-    box-sizing: border-box;
-    border-style: solid;
-    border: 1px solid gainsboro;
-    outline: none;
-    cursor: pointer;
-}
-@media (max-width: 800px){
-    .Plot {
-        width: 100%;
-    }
-    .CookieText{
-        width: 90%;
-        max-width: 90%;
-    }
-    .Par {
-        width: 87%;
-        margin: 8px 0px;
-    }
-    .TimeCont{
-        display: flex;
-        flex-direction: column;
-        align-items: center; 
-    }
+  }
+  .br {
+    display: none;
+  }
 }

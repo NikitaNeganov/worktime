@@ -126,6 +126,10 @@ class App extends Component {
     lengthMinute,
     lunch
   }) => {
+    startHour = isNaN(startHour) ? 0 : startHour;
+    startMinute = isNaN(startMinute) ? 0 : startMinute;
+    lengthHour = isNaN(lengthHour) ? 0 : lengthHour;
+    lengthMinute = isNaN(lengthMinute) ? 0 : lengthMinute;
     const lunchValue = lunch ? 1 : 0;
     const hoursTotal = lengthHour + lunchValue + lengthMinute / 60;
     const minutesTotal = lengthMinute;
@@ -144,12 +148,23 @@ class App extends Component {
         this.getDate();
         this.createCookies();
         this.calculate();
+        const name = this.state.name ? this.state.name : "Stranger";
+        if (!this.readCookie("Name")) {
+          this.createCookie("Name", name, 7);
+        }
         this.props.history.push("/time#intro");
       }
     );
   };
   componentDidMount() {}
   render() {
+    const startHour = this.readCookie("startHour");
+    const startMinute = this.readCookie("startMinute");
+    const lengthHour = this.readCookie("lengthHour");
+    const lengthMinute = this.readCookie("lengthMinute");
+    const lunchValue = this.readCookie("lunchValue");
+    const cookie =
+      startHour && startMinute && lengthHour && lengthMinute && lunchValue;
     //this.eraseCookie('Name')
     const myHome = props => {
       return (
@@ -190,11 +205,11 @@ class App extends Component {
     }
     return (
       <div>
-        <Layout>
+        <Layout cookie={cookie}>
           <Switch>
-            <Route path="/" exact render={redirect} />
             <Route path="/home" render={myHome} />
-            <Route path="/time" render={myTime} />
+            {cookie && <Route path="/time" render={myTime} />}
+            <Route render={redirect} />
           </Switch>
         </Layout>
       </div>

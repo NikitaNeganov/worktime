@@ -57,7 +57,7 @@ const home = props => {
       >
         {({ handleSubmit, submitting, values }) => (
           <form onSubmit={handleSubmit}>
-            <p>Please, enter the time your job starts. You can omit minutes.</p>
+            <p>Please, enter the time your job starts.</p>
             <div className={classes.Start}>
               <Field
                 className={classes.Input}

@@ -13,13 +13,15 @@ const navigation = props => {
       >
         Home
       </NavLink>
-      <NavLink
-        activeClassName={classes.LinkActive}
-        className={classes.NavLink}
-        to="/time"
-      >
-        Time
-      </NavLink>
+      {props.cookie && (
+        <NavLink
+          activeClassName={classes.LinkActive}
+          className={classes.NavLink}
+          to="/time"
+        >
+          Time
+        </NavLink>
+      )}
     </div>
   );
 };

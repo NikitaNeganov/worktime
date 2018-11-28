@@ -3,6 +3,8 @@ import Plot from "react-plotly.js";
 import classes from "./Time.module.css";
 import music from "../../assets/closing time.mp3";
 
+import Firework from "../UI/Firework/Firework";
+
 class Time extends Component {
   state = {
     play: false,
@@ -48,6 +50,16 @@ class Time extends Component {
     this.props.getDate();
     this.props.calculate();
     this.forceUpdate();
+    const secondsTotal = this.props.hoursTotal * 60 * 60;
+    const secondsTo = secondsTotal - this.props.secondsDone;
+    if (
+      (secondsTo >= 480 && secondsTo <= 600) ||
+      this.props.hoursDone > this.props.hoursTotal
+    ) {
+      if (!this.state.play && !this.state.pause) {
+        this.play();
+      }
+    }
   };
   componentDidMount() {
     const lengthHour = parseInt(this.props.readCookie("lengthHour"));
@@ -133,9 +145,17 @@ class Time extends Component {
     const timeLeft = this.props.hoursTotal - this.props.hoursDone;
     const remainder = timeLeft % 1;
     const caption = (timeLeft - remainder).toFixed(0) === 1 ? "hour" : "hours";
-    const hoursLeft = `${timeLeft - remainder} ${caption}`;
+    let hoursLeft = "";
+    if (timeLeft > 1) {
+      hoursLeft =
+        remainder > 0.983
+          ? `${(timeLeft + 0.49).toFixed(0)} ${caption}`
+          : `${timeLeft - remainder} ${caption}`;
+    }
     const minutesLeft =
-      remainder !== 0 ? `${(remainder * 60 + 0.5).toFixed(0)} minutes` : "";
+      remainder !== 0 && remainder < 0.983
+        ? `${(remainder * 60 + 0.5).toFixed(0)} minutes`
+        : "";
     const displayLeft = `${hoursLeft} ${minutesLeft}`;
     //#3 finished
     const percColor =
@@ -143,12 +163,15 @@ class Time extends Component {
     let working = (
       <div>
         <div className={classes.TimeCont}>
-          <a name="intro" href="/">
-            {" "}
-          </a>
           <p className={classes.Par} style={{ marginTop: "18px" }}>
-            You have spent at work {displayTime} out of <br />{" "}
-            {(this.props.hoursTotal - 0.5).toFixed(0)} hours
+            <a name="intro" href="/">
+              {" "}
+            </a>
+            You have spent at work {displayTime} out of{" "}
+            <br className={classes.br} />{" "}
+            {this.props.hoursTotal > 1
+              ? `${(this.props.hoursTotal - 0.5).toFixed(0)} hours`
+              : ""}
             {this.props.lengthMinute > 0
               ? ` ${this.props.lengthMinute} minutes`
               : ""}
@@ -215,6 +238,7 @@ class Time extends Component {
           <p>
             Current time is: <strong>{currentTime}</strong>
           </p>
+          <div style={{ height: "30vh" }} />
           {buttons}
           <div className={classes.CookieDiv}>
             <button
