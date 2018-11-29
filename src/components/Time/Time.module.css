@@ -8,6 +8,12 @@
   align-items: center;
   background-color: #f4f4f4;
 }
+.Display {
+  color: #f55;
+}
+.Left {
+  color: green;
+}
 .PlotContainer {
   background-color: #f4f4f4;
 }

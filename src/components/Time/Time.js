@@ -3,8 +3,6 @@ import Plot from "react-plotly.js";
 import classes from "./Time.module.css";
 import music from "../../assets/closing time.mp3";
 
-import Firework from "../UI/Firework/Firework";
-
 class Time extends Component {
   state = {
     play: false,
@@ -144,9 +142,9 @@ class Time extends Component {
     //#3 getting time left
     const timeLeft = this.props.hoursTotal - this.props.hoursDone;
     const remainder = timeLeft % 1;
-    const caption = (timeLeft - remainder).toFixed(0) === 1 ? "hour" : "hours";
+    const caption = (timeLeft - remainder).toFixed(0) < 1.1 ? "hour" : "hours";
     let hoursLeft = "";
-    if (timeLeft > 1) {
+    if (timeLeft > 0.983) {
       hoursLeft =
         remainder > 0.983
           ? `${(timeLeft + 0.49).toFixed(0)} ${caption}`
@@ -159,7 +157,11 @@ class Time extends Component {
     const displayLeft = `${hoursLeft} ${minutesLeft}`;
     //#3 finished
     const percColor =
-      percentageDone > 50 ? { color: "green" } : { color: "lightcoral" };
+      percentageDone > 33.33
+        ? percentageDone > 66.67
+          ? { color: "green" }
+          : { color: "orange" }
+        : { color: "lightcoral" };
     let working = (
       <div>
         <div className={classes.TimeCont}>
@@ -167,7 +169,8 @@ class Time extends Component {
             <a name="intro" href="/">
               {" "}
             </a>
-            You have spent at work {displayTime} out of{" "}
+            You have spent at work{" "}
+            <b className={classes.Display}>{displayTime}</b> out of{" "}
             <br className={classes.br} />{" "}
             {this.props.hoursTotal > 1
               ? `${(this.props.hoursTotal - 0.5).toFixed(0)} hours`
@@ -178,7 +181,7 @@ class Time extends Component {
             .
           </p>
           <p className={classes.Par} style={{ marginTop: "-1px" }}>
-            That means <b>{displayLeft}</b> to go.
+            That means <b className={classes.Left}>{displayLeft}</b> to go.
           </p>
           <p className={classes.Par}>
             This makes about <b style={percColor}>{percentageDone}%</b> of your
