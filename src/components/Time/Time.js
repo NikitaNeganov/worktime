@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Plot from "react-plotly.js";
 import classes from "./Time.module.css";
 import music from "../../assets/closing time.mp3";
+import { interpolateColors } from "../../utils/utils";
 
 class Time extends Component {
   state = {
@@ -78,6 +79,9 @@ class Time extends Component {
     clearInterval(this.interval);
   }
   render() {
+    const arr1 = interpolateColors("255,0,0", "255,184,0", 50);
+    const arr2 = interpolateColors("255,184,0", "91,150,27", 50);
+    const colors = [...arr1, ...arr2];
     const margin =
       document.body.clientHeight < 700
         ? {
@@ -116,11 +120,21 @@ class Time extends Component {
       this.props.hoursDone > 1
         ? ((this.props.hoursDone % fullHours) * 60 - 0.5).toFixed(0)
         : (this.props.hoursDone * 60 - 0.5).toFixed(0);
-    const fullMinutes = minutes > 0 ? `${minutes.toString()} minutes` : "";
-    const displayTime =
+    const minuteRemainder = minutes == 1 ? "minute" : "minutes";
+    const fullMinutes =
+      parseInt(minutes) < 60 && parseInt(minutes) > 0
+        ? `${minutes.toString()} ${minuteRemainder}`
+        : parseInt(fullHours) > 0
+        ? ""
+        : "less than a minute";
+    const hourRemainder = parseInt(fullHours) === 1 ? "hour" : "hours";
+    let displayTime =
       this.props.hoursDone < 1
         ? `${fullMinutes}` //`${(this.props.hoursDone * 60).toFixed(0)} minutes`
-        : `${fullHours} hours ${fullMinutes}`;
+        : `${fullHours} ${hourRemainder} ${fullMinutes}`;
+    if (displayTime === "1 hour 60 minutes") {
+      displayTime = "1 hour";
+    }
     const shareDone = this.props.secondsDone / (this.props.hoursTotal * 3600);
     const percentageDone = +(shareDone * 100).toFixed(2);
     //#1 finished
@@ -142,7 +156,8 @@ class Time extends Component {
     //#3 getting time left
     const timeLeft = this.props.hoursTotal - this.props.hoursDone;
     const remainder = timeLeft % 1;
-    const caption = (timeLeft - remainder).toFixed(0) < 1.1 ? "hour" : "hours";
+    const caption =
+      parseInt((timeLeft - remainder).toFixed(0)) >= 1 ? "hours" : "hour";
     let hoursLeft = "";
     if (timeLeft > 0.983) {
       hoursLeft =
@@ -150,18 +165,18 @@ class Time extends Component {
           ? `${(timeLeft + 0.49).toFixed(0)} ${caption}`
           : `${timeLeft - remainder} ${caption}`;
     }
+    const minutesLeftValue = (remainder * 60 + 0.5).toFixed(0);
+    const minutesLeftCaption = minutesLeftValue == 1 ? "minute" : "minutes";
     const minutesLeft =
       remainder !== 0 && remainder < 0.983
-        ? `${(remainder * 60 + 0.5).toFixed(0)} minutes`
+        ? `${minutesLeftValue} ${minutesLeftCaption}`
         : "";
-    const displayLeft = `${hoursLeft} ${minutesLeft}`;
+    const displayLeft =
+      percentageDone < 99.99 ? `${hoursLeft} ${minutesLeft}` : "you are free";
     //#3 finished
-    const percColor =
-      percentageDone > 33.33
-        ? percentageDone > 66.67
-          ? { color: "green" }
-          : { color: "orange" }
-        : { color: "lightcoral" };
+    const approxPerc = parseInt((percentageDone - 0.49).toFixed(0));
+    const percColor = `rgb(${colors[approxPerc]})`;
+    const percColorDisplay = { color: percColor };
     let working = (
       <div>
         <div className={classes.TimeCont}>
@@ -184,8 +199,8 @@ class Time extends Component {
             That means <b className={classes.Left}>{displayLeft}</b> to go.
           </p>
           <p className={classes.Par}>
-            This makes about <b style={percColor}>{percentageDone}%</b> of your
-            day!{" "}
+            This makes about <b style={percColorDisplay}>{percentageDone}%</b>{" "}
+            of your day!{" "}
           </p>
           <p className={classes.Par} style={{ marginBottom: "0px" }}>
             Current time is: <b>{currentTime}</b>

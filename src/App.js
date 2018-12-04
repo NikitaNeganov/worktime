@@ -80,7 +80,6 @@ class App extends Component {
     startMinute,
     lunchValue
   ) => {
-    console.log(lengthHour, lengthMinute, startHour, startMinute, lunchValue);
     const lunch = lunchValue === 1 ? true : false;
     const hoursTotal = lengthHour + lunchValue + lengthMinute / 60;
     const minutesTotal = lengthMinute;

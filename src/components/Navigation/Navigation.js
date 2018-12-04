@@ -13,6 +13,7 @@ const navigation = props => {
       >
         Home
       </NavLink>
+
       {props.cookie && (
         <NavLink
           activeClassName={classes.LinkActive}
