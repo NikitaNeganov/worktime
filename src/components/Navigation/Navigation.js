@@ -6,7 +6,6 @@ const navigation = props => {
   return (
     <div className={classes.Nav}>
       <NavLink
-        exact
         activeClassName={classes.LinkActive}
         className={classes.NavLink}
         to="/home"

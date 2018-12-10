@@ -35,6 +35,29 @@
   -webkit-transition: 0.4s;
   transition: 0.4s;
 }
+.Slider1 {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.Slider1:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
 
 input:checked + .Slider {
   background-color: rgb(33, 243, 61);
@@ -62,6 +85,19 @@ input:checked + .Slider:before {
 }
 
 .Slider:before {
+  border-radius: 50%;
+}
+input:checked + .Slider1:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.Slider1 {
+  border-radius: 34px;
+}
+
+.Slider1:before {
   border-radius: 50%;
 }
 @media (max-width: 990 px) {

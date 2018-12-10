@@ -1,9 +1,13 @@
 import React from "react";
 import classes from "./Home.module.css";
 import s from "../UI/Switch/Switch.module.css";
+import "../UI/Switch/Switch.css";
 import { Form, Field } from "react-final-form";
+import Spinner from "../UI/Spinner/Spinner";
 
 const home = props => {
+  const { joke, quote } = props;
+
   let intro = (
     <div style={{ width: "100%" }}>
       <p>please, enter your name</p>
@@ -24,7 +28,13 @@ const home = props => {
     intro = (
       <div className={classes.Intro}>
         <div />
-        <h3>Hello, {name}!</h3>
+        <h3>
+          Hello,{" "}
+          <a name="start" href="/">
+            {" "}
+          </a>
+          {name}!
+        </h3>
         <button className={classes.ButtonName} onClick={props.onClearName}>
           {btn}
         </button>
@@ -42,10 +52,23 @@ const home = props => {
     });
     props.handleSubmit(data);
   };
-  return (
-    <div className={classes.Home}>
+  const dontDisplay = props.display ? "" : "none";
+  const color = props.display ? "#f4f4f4" : "rgba(91,115,143, 0.5)";
+  const fontColor = props.display ? "black" : "white";
+  const sliderStyle = dontDisplay ? "Slider1" : "Slider";
+  //!joke
+  return !joke ? (
+    <div style={{ height: "100vh" }}>
+      <Spinner />
+    </div>
+  ) : (
+    <div
+      style={{ backgroundColor: color, color: fontColor }}
+      className={classes.Home}
+    >
       {intro}
       <Form
+        className={classes.Form}
         onSubmit={showResults}
         initialValues={{
           startMinute: 0,
@@ -149,7 +172,7 @@ const home = props => {
                   <div className={classes.ToggleContainer}>
                     <label className={s.Switch}>
                       <input {...input} type="checkbox" />
-                      <span className={s.Slider} />
+                      <span className={sliderStyle} />
                     </label>
                     <p style={{ margin: "0px 0px 0px 13px" }}>Lunch?</p>
                   </div>
@@ -169,6 +192,21 @@ const home = props => {
           </form>
         )}
       </Form>
+      <div /*style={{ display: dontDisplay }}*/ className={classes.JokeWrap}>
+        {quote && (
+          <p
+            dangerouslySetInnerHTML={{ __html: quote }}
+            className={classes.Joke}
+          />
+        )}
+        {!quote && (
+          <p className={classes.Joke}>"{props.phrase ? props.phrase : joke}"</p>
+        )}
+        <p className={classes.JokeCap}>
+          {props.author && !quote && <del>‒Wayne Gretzky</del>}
+          {!quote ? (props.author ? props.author : " ‒Dad") : null}{" "}
+        </p>
+      </div>
     </div>
   );
 };

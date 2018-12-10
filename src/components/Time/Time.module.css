@@ -1,4 +1,5 @@
 .CookieText {
+  position: relative;
   max-width: 50%;
   text-align: center;
 }
@@ -6,7 +7,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #f4f4f4;
 }
 .Display {
   color: #f55;
@@ -15,7 +15,6 @@
   color: green;
 }
 .PlotContainer {
-  background-color: #f4f4f4;
 }
 .Button {
   margin: 5px;
@@ -27,11 +26,17 @@
   outline: none;
   cursor: pointer;
 }
-@media (min-width: 801px) {
-  .CookieText {
-    position: fixed;
-    bottom: 3%;
-  }
+.ButtonErase {
+  margin: 5px;
+  padding: 8px 20px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  border-style: solid;
+  border: 1px solid gainsboro;
+  outline: none;
+  cursor: pointer;
+  position: fixed;
+  bottom: 1%;
 }
 @media (max-width: 800px) {
   .Plot {
@@ -52,5 +57,14 @@
   }
   .br {
     display: none;
+  }
+  .ButtonErase {
+    position: relative;
+  }
+}
+@media (min-height: 880px) {
+  .CookieText {
+    position: fixed;
+    bottom: 4%;
   }
 }

@@ -1,10 +1,27 @@
 import React, { Component } from "react";
 import { Switch, Route, withRouter, Redirect } from "react-router-dom";
+import axios from "axios";
 
 import Home from "./components/Home/Home";
 import Time from "./components/Time/Time";
+import Test from "./components/Test/Test";
 import Layout from "./hoc/Layout/Layout";
+import { quotes } from "./assets/quotes";
 
+let index = 0;
+const officeNames = [
+  "jim halpert",
+  "james halpert",
+  "jimothy",
+  "pam",
+  "pam beesley",
+  "dwight",
+  "dwight schrute",
+  "kevin malone",
+  "oscar martinez",
+  "michael scott"
+];
+const michael = "michael scott";
 class App extends Component {
   state = {
     startHour: 9,
@@ -19,7 +36,12 @@ class App extends Component {
     startDate: null,
     currentDate: null,
     name: null,
-    lunch: false
+    lunch: false,
+    joke: null,
+    display: true,
+    phrase: null,
+    author: null,
+    quote: null
   };
   createCookie = (name, value, days) => {
     let expires = "";
@@ -42,6 +64,12 @@ class App extends Component {
   };
   onClearName = () => {
     this.eraseCookie("Name");
+    this.setState({
+      name: null,
+      phrase: null,
+      author: null,
+      quote: null
+    });
     this.forceUpdate();
   };
   eraseCookie = name => {
@@ -49,9 +77,34 @@ class App extends Component {
   };
   nameChangedHandler = e => {
     const name = e.target.value;
+    let check = false;
+    for (let officeName of officeNames) {
+      if (name.toLowerCase().includes(officeName)) {
+        check = true;
+      }
+    }
+
+    const phrase = check ? "You miss 100% of the shots you don't take" : null;
+    const author = check ? ` ‒Michael Scott` : null;
+
+    this.setQuote(check, phrase, author, name);
+
     this.setState({
       name
     });
+  };
+  setQuote = (check, phrase = null, author = null, name = "Stranger") => {
+    const random = Math.floor(
+      Math.random() * Object.keys(quotes).length + 1
+    ).toString();
+    const quote = name.toLowerCase().includes(michael)
+      ? null
+      : check
+      ? random === `${Object.keys(quotes).length}`
+        ? null
+        : quotes[random]
+      : null;
+    this.setState({ quote, author, phrase });
   };
   onEnterName = e => {
     e.preventDefault();
@@ -155,7 +208,40 @@ class App extends Component {
       }
     );
   };
-  componentDidMount() {}
+
+  easterEgg = e => {
+    const code = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
+    const key = parseInt(e.which || e.detail);
+    if (key === code[index]) {
+      index++;
+
+      if (index === code.length) {
+        this.setState(prevState => ({ display: !prevState.display }));
+        index = 0;
+      }
+    } else {
+      index = 0;
+    }
+  };
+  componentDidMount() {
+    const name = this.readCookie("Name");
+    const nameCheck = name
+      ? name.toLowerCase() === "jimothy" ||
+        name.toLowerCase() === "jim halpert" ||
+        name.toLowerCase() === "james halpert"
+      : false;
+    this.setQuote(nameCheck);
+    axios({
+      method: "get",
+      url: "https://icanhazdadjoke.com/",
+      headers: {
+        Accept: "application/json"
+      }
+    }).then(res => {
+      const joke = res.data.joke;
+      this.setState({ joke });
+    });
+  }
   render() {
     const startHour = this.readCookie("startHour");
     const startMinute = this.readCookie("startMinute");
@@ -168,6 +254,7 @@ class App extends Component {
     const myHome = props => {
       return (
         <Home
+          joke={this.state.joke}
           handleButton={this.handleButton}
           onClearName={this.onClearName}
           readCookie={this.readCookie}
@@ -200,13 +287,14 @@ class App extends Component {
 
     let redirect = () => <Redirect to="/time" />;
     if (!this.readCookie("startHour")) {
-      redirect = () => <Redirect to="/home" />;
+      redirect = () => <Redirect to="/home#start" />;
     }
     return (
-      <div>
+      <div onKeyDown={e => this.easterEgg(e)} tabIndex="0">
         <Layout cookie={cookie}>
           <Switch>
             <Route path="/home" render={myHome} />
+            <Route path="/test" component={Test} />
             {cookie && <Route path="/time" render={myTime} />}
             <Route render={redirect} />
           </Switch>

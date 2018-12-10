@@ -79,9 +79,13 @@ class Time extends Component {
     clearInterval(this.interval);
   }
   render() {
-    const arr1 = interpolateColors("255,0,0", "255,184,0", 50);
-    const arr2 = interpolateColors("255,184,0", "91,150,27", 50);
-    const colors = [...arr1, ...arr2];
+    const color = this.props.display ? "#f4f4f4" : "#adb9c7";
+    const fontColor = this.props.display ? "black" : "white";
+    const arr1 = interpolateColors("255,0,0", "255,184,0", 25);
+    const arr2 = interpolateColors("255,184,0", "255,141,0", 25);
+    const arr3 = interpolateColors("255,141,0", "91,150,27", 25);
+    const arr4 = interpolateColors("91,150,27", "4,163,11", 25);
+    const colors = [...arr1, ...arr2, ...arr3, ...arr4];
     const margin =
       document.body.clientHeight < 700
         ? {
@@ -101,7 +105,7 @@ class Time extends Component {
     const playing = this.state.play ? { backgroundColor: "#97c482" } : {};
     const paused = this.state.pause ? { backgroundColor: "#97c482" } : {};
     const buttons = (
-      <div style={{ backgroundColor: "#f4f4f4" }}>
+      <div /*style={{ backgroundColor: "#f4f4f4" }}*/>
         <button style={playing} className={classes.Button} onClick={this.play}>
           Play
         </button>
@@ -120,7 +124,7 @@ class Time extends Component {
       this.props.hoursDone > 1
         ? ((this.props.hoursDone % fullHours) * 60 - 0.5).toFixed(0)
         : (this.props.hoursDone * 60 - 0.5).toFixed(0);
-    const minuteRemainder = minutes == 1 ? "minute" : "minutes";
+    const minuteRemainder = parseInt(minutes) === 1 ? "minute" : "minutes";
     const fullMinutes =
       parseInt(minutes) < 60 && parseInt(minutes) > 0
         ? `${minutes.toString()} ${minuteRemainder}`
@@ -166,7 +170,8 @@ class Time extends Component {
           : `${timeLeft - remainder} ${caption}`;
     }
     const minutesLeftValue = (remainder * 60 + 0.5).toFixed(0);
-    const minutesLeftCaption = minutesLeftValue == 1 ? "minute" : "minutes";
+    const minutesLeftCaption =
+      parseInt(minutesLeftValue) === 1 ? "minute" : "minutes";
     const minutesLeft =
       remainder !== 0 && remainder < 0.983
         ? `${minutesLeftValue} ${minutesLeftCaption}`
@@ -231,7 +236,7 @@ class Time extends Component {
                 x: 0.5
               },
               title: "Your left/done work for today",
-              paper_bgcolor: "#f4f4f4",
+              paper_bgcolor: color,
               margin: margin
             }}
           />
@@ -256,14 +261,9 @@ class Time extends Component {
           <p>
             Current time is: <strong>{currentTime}</strong>
           </p>
-          <div style={{ height: "30vh" }} />
           {buttons}
           <div className={classes.CookieDiv}>
-            <button
-              style={{ position: "fixed", bottom: "5px" }}
-              className={classes.Button}
-              onClick={this.erase}
-            >
+            <button className={classes.ButtonErase} onClick={this.erase}>
               Erase cookies
             </button>
             <p className={classes.CookieText}>
@@ -284,7 +284,7 @@ class Time extends Component {
           {buttons}
           <div className={classes.CookieDiv}>
             <button
-              style={{ position: "fixed", bottom: "5px" }}
+              style={{ position: "relative", bottom: "5px" }}
               className={classes.Button}
               onClick={this.erase}
             >
@@ -301,7 +301,9 @@ class Time extends Component {
     }
 
     return (
-      <div style={{ height: "100vh" }}>
+      <div
+        style={{ height: "100vh", color: fontColor, backgroundColor: color }}
+      >
         {intro}
         {working}
       </div>
