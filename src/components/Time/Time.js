@@ -105,7 +105,9 @@ class Time extends Component {
     const playing = this.state.play ? { backgroundColor: "#97c482" } : {};
     const paused = this.state.pause ? { backgroundColor: "#97c482" } : {};
     const buttons = (
-      <div /*style={{ backgroundColor: "#f4f4f4" }}*/>
+      <div
+        className={classes.Buttons} /*style={{ backgroundColor: "#f4f4f4" }}*/
+      >
         <button style={playing} className={classes.Button} onClick={this.play}>
           Play
         </button>
@@ -302,7 +304,8 @@ class Time extends Component {
 
     return (
       <div
-        style={{ height: "100vh", color: fontColor, backgroundColor: color }}
+        className={classes.TimeFull}
+        style={{ color: fontColor, backgroundColor: color }}
       >
         {intro}
         {working}

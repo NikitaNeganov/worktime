@@ -38,6 +38,9 @@
   position: fixed;
   bottom: 1%;
 }
+.TimeFull {
+  min-height: 92.5vh;
+}
 @media (max-width: 800px) {
   .Plot {
     width: 100%;
@@ -60,6 +63,10 @@
   }
   .ButtonErase {
     position: relative;
+  }
+  .CookieDiv,
+  .Buttons {
+    background-color: #f4f4f4;
   }
 }
 @media (min-height: 880px) {
