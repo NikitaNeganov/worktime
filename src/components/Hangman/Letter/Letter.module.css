@@ -1,0 +1,15 @@
+.Letter {
+  width: 50px;
+  margin: 5px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  padding: 15px 3px;
+  list-style: none;
+  font-size: 25px;
+}
+@media (max-width: 800px) {
+  .Letter {
+    width: 7%;
+    padding: 1%;
+  }
+}

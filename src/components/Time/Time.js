@@ -187,7 +187,10 @@ class Time extends Component {
     let working = (
       <div>
         <div className={classes.TimeCont}>
-          <p className={classes.Par} style={{ marginTop: "18px" }}>
+          <p
+            className={classes.Par + "" + classes.pTime}
+            style={{ marginTop: "18px" }}
+          >
             <a name="intro" href="/">
               {" "}
             </a>
@@ -202,14 +205,20 @@ class Time extends Component {
               : ""}
             .
           </p>
-          <p className={classes.Par} style={{ marginTop: "-1px" }}>
+          <p
+            className={classes.Par + "" + classes.pTime}
+            style={{ marginTop: "-1px" }}
+          >
             That means <b className={classes.Left}>{displayLeft}</b> to go.
           </p>
-          <p className={classes.Par}>
+          <p className={classes.Par + "" + classes.pTime}>
             This makes about <b style={percColorDisplay}>{percentageDone}%</b>{" "}
             of your day!{" "}
           </p>
-          <p className={classes.Par} style={{ marginBottom: "0px" }}>
+          <p
+            className={classes.Par + "" + classes.pTime}
+            style={{ marginBottom: "0px" }}
+          >
             Current time is: <b>{currentTime}</b>
           </p>
         </div>
@@ -248,7 +257,7 @@ class Time extends Component {
           <button className={classes.Button} onClick={this.erase}>
             Erase cookies
           </button>
-          <p className={classes.CookieText}>
+          <p className={classes.CookieText + " " + classes.pTime}>
             Site has saved your preferences (start time and workday length) in
             cookies. In order to redirect to Home page and change your
             preferences click "Erase cookies".
@@ -260,7 +269,7 @@ class Time extends Component {
       working = (
         <div>
           <h3>Your workday has already ended. Congratulations!</h3>
-          <p>
+          <p className={classes.pTime}>
             Current time is: <strong>{currentTime}</strong>
           </p>
           {buttons}
@@ -268,7 +277,7 @@ class Time extends Component {
             <button className={classes.ButtonErase} onClick={this.erase}>
               Erase cookies
             </button>
-            <p className={classes.CookieText}>
+            <p className={classes.CookieText + "" + classes.pTime}>
               Site has saved your preferences (start time and workday length) in
               cookies. In order to access Home page again and change your
               preferences click "Erase cookies".
@@ -280,7 +289,7 @@ class Time extends Component {
       working = (
         <div>
           <h3>You haven't started yet, get off!</h3>
-          <p>
+          <p className={classes.pTime}>
             Current time is: <strong>{currentTime}</strong>
           </p>
           {buttons}
@@ -292,7 +301,7 @@ class Time extends Component {
             >
               Erase cookies
             </button>
-            <p className={classes.CookieText}>
+            <p className={classes.CookieText + " " + classes.pTime}>
               Site has saved your preferences (start time and workday length) in
               cookies. In order to access Home page again and change your
               preferences click "Erase cookies".

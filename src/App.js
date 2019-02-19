@@ -5,23 +5,42 @@ import axios from "axios";
 import Home from "./components/Home/Home";
 import Time from "./components/Time/Time";
 import Test from "./components/Test/Test";
+import Hangman from "./components/Hangman/Hangman";
 import Layout from "./hoc/Layout/Layout";
 import { quotes } from "./assets/quotes";
+import { quotes as quotesTBBT } from "./assets/quotesTBBT";
 
 let index = 0;
 const officeNames = [
   "jim halpert",
   "james halpert",
   "jimothy",
+  "halpert",
   "pam",
-  "pam beesley",
+  "beesley",
   "dwight",
-  "dwight schrute",
-  "kevin malone",
-  "oscar martinez",
+  "schrute",
+  "malone",
+  "martinez",
   "michael scott"
 ];
-const michael = "michael scott";
+const tbbtNames = [
+  "leonard",
+  "hofstadter",
+  "sheldon",
+  "cooper",
+  "penny",
+  "howard",
+  "wolowitz",
+  "raj",
+  "koothrappali",
+  "bernadette",
+  "rostenkowski",
+  "amy",
+  "farrah",
+  "fowler"
+];
+const michael = "michael g. scott";
 class App extends Component {
   state = {
     startHour: 9,
@@ -77,34 +96,87 @@ class App extends Component {
   };
   nameChangedHandler = e => {
     const name = e.target.value;
+    if (name.toLowerCase().includes("hangman")) {
+      this.props.history.push("/hangman");
+    }
     let check = false;
     for (let officeName of officeNames) {
       if (name.toLowerCase().includes(officeName)) {
         check = true;
       }
     }
+    let checkTbbt = false;
+    for (let tbbtName of tbbtNames) {
+      if (name.toLowerCase().includes(tbbtName)) {
+        checkTbbt = true;
+      }
+    }
 
     const phrase = check ? "You miss 100% of the shots you don't take" : null;
     const author = check ? ` ‒Michael Scott` : null;
 
-    this.setQuote(check, phrase, author, name);
+    this.setQuote({ check, phrase, author, name, checkTbbt });
 
     this.setState({
       name
     });
   };
-  setQuote = (check, phrase = null, author = null, name = "Stranger") => {
-    const random = Math.floor(
-      Math.random() * Object.keys(quotes).length + 1
-    ).toString();
-    const quote = name.toLowerCase().includes(michael)
-      ? null
-      : check
-      ? random === `${Object.keys(quotes).length}`
-        ? null
-        : quotes[random]
-      : null;
-    this.setState({ quote, author, phrase });
+  setQuote = ({
+    check,
+    phrase = null,
+    author = null,
+    name = "Stranger",
+    checkTbbt
+  }) => {
+    if (
+      (name.toLowerCase().includes("want") &&
+        name.toLowerCase().includes("easter") &&
+        name.toLowerCase().includes("egg")) ||
+      name.toLowerCase().includes("easter")
+    ) {
+      const uber = {
+        ...quotes,
+        ...quotes,
+        ...quotes,
+        ...quotesTBBT,
+        ...quotes
+      };
+      const random = Math.floor(
+        Math.random() * Object.keys(uber).length
+      ).toString();
+      const quote = uber[random];
+
+      this.setState({ quote, author, phrase });
+    } else if (check) {
+      const random = Math.floor(
+        Math.random() * Object.keys(quotes).length + 1
+      ).toString();
+      const quote =
+        name.toLowerCase().includes(michael) ||
+        name.toLowerCase().includes("michael scott")
+          ? null
+          : check
+          ? random === `${Object.keys(quotes).length}`
+            ? null
+            : quotes[random]
+          : null;
+
+      this.setState({ quote, author, phrase });
+    } else if (checkTbbt) {
+      const random = Math.floor(
+        Math.random() * Object.keys(quotesTBBT).length
+      ).toString();
+      const quote = checkTbbt
+        ? random === `${Object.keys(quotesTBBT).length}`
+          ? null
+          : quotesTBBT[random]
+        : null;
+
+      this.setState({ quote, author, phrase });
+    } else {
+      const [quote, author, phrase] = [null, null, null];
+      this.setState({ quote, author, phrase });
+    }
   };
   onEnterName = e => {
     e.preventDefault();
@@ -127,11 +199,11 @@ class App extends Component {
     this.setState({ currentDate, startDate });
   };
   handleCookies = (
-    lengthHour,
-    lengthMinute,
-    startHour,
-    startMinute,
-    lunchValue
+    lengthHour = 8,
+    lengthMinute = 0,
+    startHour = 9,
+    startMinute = 0,
+    lunchValue = 1
   ) => {
     const lunch = lunchValue === 1 ? true : false;
     const hoursTotal = lengthHour + lunchValue + lengthMinute / 60;
@@ -224,13 +296,31 @@ class App extends Component {
     }
   };
   componentDidMount() {
-    const name = this.readCookie("Name");
-    const nameCheck = name
-      ? name.toLowerCase() === "jimothy" ||
-        name.toLowerCase() === "jim halpert" ||
-        name.toLowerCase() === "james halpert"
-      : false;
-    this.setQuote(nameCheck);
+    let name;
+    try {
+      name = this.readCookie("Name");
+      name.toLowerCase();
+    } catch {
+      name = "Incognito";
+    }
+
+    let check = false;
+    for (let officeName of officeNames) {
+      if (name.toLowerCase().includes(officeName)) {
+        check = true;
+      }
+    }
+    let checkTbbt = false;
+    for (let tbbtName of tbbtNames) {
+      if (name.toLowerCase().includes(tbbtName)) {
+        checkTbbt = true;
+      }
+    }
+
+    const phrase = check ? "You miss 100% of the shots you don't take" : null;
+    const author = check ? ` ‒Michael Scott` : null;
+
+    this.setQuote({ check, phrase, author, name, checkTbbt });
     axios({
       method: "get",
       url: "https://icanhazdadjoke.com/",
@@ -284,6 +374,15 @@ class App extends Component {
         />
       );
     };
+    const myHangman = props => {
+      return (
+        <Hangman
+          readCookie={this.readCookie}
+          createCookie={this.createCookie}
+          eraseCookie={this.eraseCookie}
+        />
+      );
+    };
 
     let redirect = () => <Redirect to="/time" />;
     if (!this.readCookie("startHour")) {
@@ -295,6 +394,7 @@ class App extends Component {
           <Switch>
             <Route path="/home" render={myHome} />
             <Route path="/test" component={Test} />
+            <Route path="/hangman" render={myHangman} />
             {cookie && <Route path="/time" render={myTime} />}
             <Route render={redirect} />
           </Switch>

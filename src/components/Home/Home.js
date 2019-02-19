@@ -1,6 +1,7 @@
 import React from "react";
 import classes from "./Home.module.css";
 import s from "../UI/Switch/Switch.module.css";
+import "./Home.css";
 import "../UI/Switch/Switch.css";
 import { Form, Field } from "react-final-form";
 import Spinner from "../UI/Spinner/Spinner";
@@ -10,7 +11,7 @@ const home = props => {
 
   let intro = (
     <div style={{ width: "100%" }}>
-      <p>please, enter your name</p>
+      <p className={classes.pForm}>please, enter your name</p>
       <form onSubmit={props.onEnterName}>
         <input
           className={classes.Input}
@@ -41,7 +42,7 @@ const home = props => {
       </div>
     );
   }
-  const showResults = async values => {
+  const showResults = values => {
     const data = {};
     Object.keys(values).forEach(key => {
       if (key !== "lunch") {
@@ -56,6 +57,10 @@ const home = props => {
   const color = props.display ? "#f4f4f4" : "rgba(91,115,143, 0.5)";
   const fontColor = props.display ? "black" : "white";
   const sliderStyle = dontDisplay ? "Slider1" : "Slider";
+  const style =
+    props.check || props.checkTbbt
+      ? { alignItems: "baseline" }
+      : { textAlign: "center" };
   //!joke
   return !joke ? (
     <div style={{ height: "100vh" }}>
@@ -80,7 +85,9 @@ const home = props => {
       >
         {({ handleSubmit, submitting, values }) => (
           <form onSubmit={handleSubmit}>
-            <p>Please, enter the time your job starts.</p>
+            <p className={classes.pForm}>
+              Please, enter the time your job starts.
+            </p>
             <div className={classes.Start}>
               <Field
                 className={classes.Input}
@@ -123,7 +130,9 @@ const home = props => {
                 )}
               </Field>
             </div>
-            <p>Please, enter the length of your workday.</p>
+            <p className={classes.pForm}>
+              Please, enter the length of your workday.
+            </p>
             <div className={classes.Length}>
               <Field
                 className={classes.Input}
@@ -200,11 +209,13 @@ const home = props => {
           />
         )}
         {!quote && (
-          <p className={classes.Joke}>"{props.phrase ? props.phrase : joke}"</p>
+          <p style={style} className={classes.Joke}>
+            "{props.phrase ? props.phrase : joke}"
+          </p>
         )}
         <p className={classes.JokeCap}>
           {props.author && !quote && <del>‒Wayne Gretzky</del>}
-          {!quote ? (props.author ? props.author : " ‒Dad") : null}{" "}
+          {!quote ? (props.author ? props.author : null) : null}{" "}
         </p>
       </div>
     </div>

@@ -26,6 +26,9 @@
   outline: none;
   cursor: pointer;
 }
+.pTime {
+  margin: 16px 0px;
+}
 .ButtonErase {
   margin: 5px;
   padding: 8px 20px;
@@ -51,7 +54,7 @@
   }
   .Par {
     width: 87%;
-    margin: 8px 0px;
+    margin: 16px 0px;
   }
   .TimeCont {
     display: flex;
