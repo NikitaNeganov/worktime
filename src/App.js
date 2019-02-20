@@ -7,6 +7,7 @@ import Time from "./components/Time/Time";
 import Test from "./components/Test/Test";
 import Hangman from "./components/Hangman/Hangman";
 import Layout from "./hoc/Layout/Layout";
+import music from "./assets/closing time.mp3";
 import { quotes } from "./assets/quotes";
 import { quotes as quotesTBBT } from "./assets/quotesTBBT";
 
@@ -41,6 +42,7 @@ const tbbtNames = [
   "fowler"
 ];
 const michael = "michael g. scott";
+
 class App extends Component {
   state = {
     startHour: 9,
@@ -60,8 +62,37 @@ class App extends Component {
     display: true,
     phrase: null,
     author: null,
-    quote: null
+    quote: null,
+    play: false,
+    repeat: true,
+    pause: null
   };
+
+  audio = new Audio(music);
+
+  play = () => {
+    if (this.audio === null) {
+      this.audio = new Audio(music);
+    }
+    this.audio.currentTime = 260;
+    this.audio.loop = true;
+    this.setState({ play: true, pause: false });
+    this.audio.play();
+  };
+  stop = () => {
+    if (this.audio) {
+      this.audio.pause();
+    }
+    this.setState({ play: false, pause: false });
+    this.audio = null;
+  };
+  pause = () => {
+    if (this.audio) {
+      this.setState({ play: false, pause: true });
+      this.audio.pause();
+    }
+  };
+
   createCookie = (name, value, days) => {
     let expires = "";
     if (days) {
@@ -94,6 +125,10 @@ class App extends Component {
   eraseCookie = name => {
     this.createCookie(name, "", -1);
   };
+
+  componentDidUpdate() {
+    console.log("updated");
+  }
   nameChangedHandler = e => {
     const name = e.target.value;
     if (name.toLowerCase().includes("hangman")) {
@@ -295,7 +330,29 @@ class App extends Component {
       index = 0;
     }
   };
+
+  checkMusic = () => {
+    console.log("check music");
+    this.calculate();
+    const secondsTo = this.state.hoursTotal * 3600 - this.state.secondsDone;
+    if (
+      (secondsTo >= 480 && secondsTo <= 600) ||
+      this.state.hoursDone > this.state.hoursTotal
+    ) {
+      if (!this.state.play && !this.state.pause) {
+        this.play();
+      }
+    }
+  };
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
   componentDidMount() {
+    this.interval = setInterval(() => {
+      this.checkMusic();
+    }, 30000);
     let name;
     try {
       name = this.readCookie("Name");
@@ -333,6 +390,7 @@ class App extends Component {
     });
   }
   render() {
+    console.log("rendered");
     const startHour = this.readCookie("startHour");
     const startMinute = this.readCookie("startMinute");
     const lengthHour = this.readCookie("lengthHour");
@@ -369,6 +427,10 @@ class App extends Component {
           onEnterLength={this.onEnterLength}
           getDate={this.getDate}
           calculate={this.calculate}
+          onPlay={this.play}
+          onPause={this.pause}
+          onStop={this.stop}
+          audio={this.audio}
           {...this.state}
           {...props}
         />
@@ -380,6 +442,7 @@ class App extends Component {
           readCookie={this.readCookie}
           createCookie={this.createCookie}
           eraseCookie={this.eraseCookie}
+          {...props}
         />
       );
     };
@@ -390,7 +453,14 @@ class App extends Component {
     }
     return (
       <div onKeyDown={e => this.easterEgg(e)} tabIndex="0">
-        <Layout cookie={cookie}>
+        <Layout
+          cookie={cookie}
+          play={this.state.play}
+          pause={this.state.pause}
+          onPlay={this.play}
+          onPause={this.pause}
+          onStop={this.stop}
+        >
           <Switch>
             <Route path="/home" render={myHome} />
             <Route path="/test" component={Test} />

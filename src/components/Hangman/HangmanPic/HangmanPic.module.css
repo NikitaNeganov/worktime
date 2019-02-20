@@ -1,0 +1,10 @@
+.Pic {
+  width: 50%;
+  margin: 10px;
+}
+
+@media (min-width: 1400px) {
+  .Pic {
+    width: 40%;
+  }
+}

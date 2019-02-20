@@ -7,6 +7,7 @@ import { en, ru } from "../../assets/alphabets";
 import { array as hangmanWords } from "../../assets/hangman";
 import Spinner from "../UI/Spinner/Spinner";
 import LetterList from "./LetterList/LetterList";
+import HangmanPic from "./HangmanPic/HangmanPic";
 
 const spinner = (
   <div className={classes.SpinnerWrap}>
@@ -42,7 +43,7 @@ class Hangman extends PureComponent {
     const winCookie = this.props.readCookie("wins");
     const loseCookie = this.props.readCookie("losses");
     const wins = winCookie || winCookie === 0 ? winCookie : 0;
-    const losses = loseCookie || loseCookie === 0 ? winCookie : 0;
+    const losses = loseCookie || loseCookie === 0 ? loseCookie : 0;
     this.createScoreCookies(wins, losses);
   }
 
@@ -174,7 +175,7 @@ class Hangman extends PureComponent {
         secret: word.split(""),
         guessed: word.split("").map(el => "_")
       });
-    }, 2000);
+    }, 500);
   };
 
   render() {
@@ -191,10 +192,7 @@ class Hangman extends PureComponent {
               tabIndex="0"
             >
               <h1>{this.state.guessed.join(" ")}</h1>
-              <h1>
-                You have {this.state.maxmistakes - this.state.mistakes}{" "}
-                attempts.
-              </h1>
+              <HangmanPic mistakes={this.state.mistakes} />
               <LetterList
                 msg={this.state.message}
                 onClick={e => this.handleLetterClick(e.target.innerText)}

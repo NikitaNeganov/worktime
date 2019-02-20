@@ -1,26 +1,106 @@
 .NavLink {
-    text-decoration: none;
-    color: #555454;
-    margin: 15px 45px;
-    padding: 7px 13px;
-    border: 1px solid #9c9a9a;
-    border-radius: 5px;
-    font-size: 20px;
+  text-decoration: none;
+  color: #555454;
+  margin: 15px 45px;
+  padding: 7px 13px;
+  border: 1px solid #9c9a9a;
+  border-radius: 5px;
+  font-size: 20px;
+}
+.Container {
+  display: flex;
+  flex-direction: row;
+  background-color: #cacaca;
+  justify-content: center;
+}
+.MusicContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.MusicContainer,
+.NavContainer,
+.Empty {
+  width: 100%;
 }
 .LinkActive {
-    background-color: #97c482;
+  background-color: #97c482;
 }
-.Nav :hover{
-    background-color: #97c482;
+.Nav :hover {
+  background-color: #97c482;
 }
 .Nav {
-    background-color: #cacaca;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
+  background-color: #cacaca;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.Music {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  align-items: center;
+}
+.Music :hover {
+  background-color: #ece8ec;
+}
+.Button {
+  list-style: none;
+  margin: 0px 0 0 7%;
+  width: 10%;
+  height: 60%;
+  cursor: pointer;
+  border-radius: 20px;
 }
 @media (max-width: 863px) {
-    .NavLink {
-        margin: 9px 30px;
-    }
+  .NavLink {
+    margin: 9px 30px;
+  }
+
+  .Empty {
+    display: none;
+  }
+  .NavContainer {
+    order: -1;
+  }
+  .NavLink {
+    margin: 9px 5px;
+  }
+  .Music {
+    justify-content: flex-end;
+  }
+  .Button {
+    margin: 0 10px;
+    width: 10%;
+  }
+}
+@media (max-width: 400px) {
+  .NavLink {
+    margin: 9px 30px;
+  }
+
+  .Empty {
+    display: none;
+  }
+  .NavContainer {
+    order: -1;
+  }
+  .NavLink {
+    margin: 9px 5px;
+  }
+  .Music {
+    justify-content: flex-end;
+  }
+  .Button {
+    margin: 0 10px;
+    width: 19%;
+  }
+}
+@media (min-width: 1400px) {
+  .Button {
+    width: 8.6%;
+    height: 58%;
+    border-radius: 120px;
+  }
 }

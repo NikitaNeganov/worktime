@@ -5,18 +5,18 @@ import music from "../../assets/closing time.mp3";
 import { interpolateColors } from "../../utils/utils";
 
 class Time extends Component {
-  state = {
-    play: false,
-    pause: null
-  };
-  audio = new Audio(music);
+  //state = {
+  //  play: false,
+  //  pause: null
+  //};
+  //audio = new Audio(music);
   erase = () => {
     this.props.eraseCookie("startHour");
     this.props.eraseCookie("startMinute");
     this.props.eraseCookie("lengthHour");
     this.props.eraseCookie("lengthMinute");
     this.props.eraseCookie("lunchValue");
-    this.pause();
+    this.props.onPause();
     this.props.history.push("/home");
   };
 
@@ -25,38 +25,39 @@ class Time extends Component {
     this.props.onClearName();
     this.props.history.push("/home");
   };
-  play = () => {
-    if (this.audio === null) {
-      this.audio = new Audio(music);
-    }
-    this.setState({ play: true, pause: false });
-    this.audio.play();
-  };
-  stop = () => {
-    if (this.audio) {
-      this.audio.pause();
-    }
-    this.setState({ play: false, pause: false });
-    this.audio = null;
-  };
-  pause = () => {
-    if (this.audio) {
-      this.setState({ play: false, pause: true });
-      this.audio.pause();
-    }
-  };
+  //play = () => {
+  //  if (this.audio === null) {
+  //    this.audio = new Audio(music);
+  //  }
+  //  this.setState({ play: true, pause: false });
+  //  this.audio.play();
+  //};
+  //stop = () => {
+  //  if (this.audio) {
+  //    this.audio.pause();
+  //  }
+  //  this.setState({ play: false, pause: false });
+  //  this.audio = null;
+  //};
+  //pause = () => {
+  //  if (this.audio) {
+  //    this.setState({ play: false, pause: true });
+  //    this.audio.pause();
+  //  }
+  //};
   update = () => {
     this.props.getDate();
     this.props.calculate();
     this.forceUpdate();
     const secondsTotal = this.props.hoursTotal * 60 * 60;
     const secondsTo = secondsTotal - this.props.secondsDone;
+
     if (
       (secondsTo >= 480 && secondsTo <= 600) ||
       this.props.hoursDone > this.props.hoursTotal
     ) {
-      if (!this.state.play && !this.state.pause) {
-        this.play();
+      if (!this.props.play && !this.props.pause) {
+        this.props.onPlay();
       }
     }
   };
@@ -102,23 +103,7 @@ class Time extends Component {
             t: 120,
             pad: 40
           };
-    const playing = this.state.play ? { backgroundColor: "#97c482" } : {};
-    const paused = this.state.pause ? { backgroundColor: "#97c482" } : {};
-    const buttons = (
-      <div
-        className={classes.Buttons} /*style={{ backgroundColor: "#f4f4f4" }}*/
-      >
-        <button style={playing} className={classes.Button} onClick={this.play}>
-          Play
-        </button>
-        <button style={paused} className={classes.Button} onClick={this.pause}>
-          Pause
-        </button>
-        <button className={classes.Button} onClick={this.stop}>
-          Stop
-        </button>
-      </div>
-    );
+
     //#1 getting how much time done
     const currentTime = new Date().toLocaleString("ru-RU");
     const fullHours = (this.props.hoursDone - 0.5).toFixed(0);
@@ -252,7 +237,6 @@ class Time extends Component {
             }}
           />
         </div>
-        {buttons}
         <div className={classes.CookieDiv}>
           <button className={classes.Button} onClick={this.erase}>
             Erase cookies
@@ -272,7 +256,6 @@ class Time extends Component {
           <p className={classes.pTime}>
             Current time is: <strong>{currentTime}</strong>
           </p>
-          {buttons}
           <div className={classes.CookieDiv}>
             <button className={classes.ButtonErase} onClick={this.erase}>
               Erase cookies
@@ -292,7 +275,6 @@ class Time extends Component {
           <p className={classes.pTime}>
             Current time is: <strong>{currentTime}</strong>
           </p>
-          {buttons}
           <div className={classes.CookieDiv}>
             <button
               style={{ position: "relative", bottom: "5px" }}
