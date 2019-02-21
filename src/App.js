@@ -74,7 +74,6 @@ class App extends Component {
     if (this.audio === null) {
       this.audio = new Audio(music);
     }
-    this.audio.currentTime = 260;
     this.audio.loop = true;
     this.setState({ play: true, pause: false });
     this.audio.play();
@@ -126,9 +125,6 @@ class App extends Component {
     this.createCookie(name, "", -1);
   };
 
-  componentDidUpdate() {
-    console.log("updated");
-  }
   nameChangedHandler = e => {
     const name = e.target.value;
     if (name.toLowerCase().includes("hangman")) {
@@ -333,6 +329,7 @@ class App extends Component {
 
   checkMusic = () => {
     console.log("check music");
+    this.getDate();
     this.calculate();
     const secondsTo = this.state.hoursTotal * 3600 - this.state.secondsDone;
     if (
@@ -390,7 +387,6 @@ class App extends Component {
     });
   }
   render() {
-    console.log("rendered");
     const startHour = this.readCookie("startHour");
     const startMinute = this.readCookie("startMinute");
     const lengthHour = this.readCookie("lengthHour");

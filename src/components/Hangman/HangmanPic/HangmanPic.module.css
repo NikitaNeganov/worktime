@@ -8,3 +8,9 @@
     width: 40%;
   }
 }
+@media (max-height: 800px) {
+  .Pic {
+    height: 40%;
+    width: 45%;
+  }
+}
