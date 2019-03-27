@@ -1,0 +1,55 @@
+.Container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  min-height: 80vh;
+}
+.SpinnerWrap {
+  margin-top: 15%;
+}
+.Button {
+  margin: 20px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  border-style: solid;
+  border: 1px solid gainsboro;
+  outline: none;
+  cursor: pointer;
+}
+.Button :disabled {
+  background-color: bisque;
+}
+.ButtonName {
+  margin: 0px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  border-style: solid;
+  border: 1px solid gainsboro;
+  outline: none;
+  cursor: pointer;
+}
+.ButtonContainer {
+  margin-top: 7%;
+}
+.ButtonContainer :hover {
+  background-color: cornflowerblue;
+}
+.SpinnerContainer {
+  min-height: 92.5vh;
+}
+.Stats {
+  border: 1px solid rgb(136, 120, 10);
+  box-shadow: 20px 20px 5px 0px #b97;
+  min-width: 40%;
+  border-radius: 15px;
+  margin: 30px 10px 10px 10px;
+  padding: 18px;
+  background-color: wheat;
+}
+@media (max-width: 800px) {
+  .Stats {
+    max-width: 70%;
+  }
+}

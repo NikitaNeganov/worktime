@@ -1,9 +1,8 @@
-version: '3.5'
+version: "3.5"
 
 services:
-
-  sample-app:
-    container_name: time-app
+  sample-app11:
+    container_name: time-app11
     build:
       context: .
       dockerfile: Dockerfile
@@ -11,6 +10,6 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     ports:
-      - '3000:3000'
+      - "3000:3000"
     environment:
       - NODE_ENV=development

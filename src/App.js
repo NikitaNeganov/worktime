@@ -1,23 +1,97 @@
 import React, { Component } from "react";
 import { Switch, Route, withRouter, Redirect } from "react-router-dom";
+import axios from "axios";
 
 import Home from "./components/Home/Home";
 import Time from "./components/Time/Time";
 import Test from "./components/Test/Test";
+import Hangman from "./components/Hangman/Hangman";
 import Layout from "./hoc/Layout/Layout";
+import music from "./assets/closing time.mp3";
+import { quotes } from "./assets/quotes";
+import { quotes as quotesTBBT } from "./assets/quotesTBBT";
+
+let index = 0;
+const officeNames = [
+  "jim halpert",
+  "james halpert",
+  "jimothy",
+  "halpert",
+  "pam",
+  "beesley",
+  "dwight",
+  "schrute",
+  "malone",
+  "martinez",
+  "michael scott"
+];
+const tbbtNames = [
+  "leonard",
+  "hofstadter",
+  "sheldon",
+  "cooper",
+  "penny",
+  "howard",
+  "wolowitz",
+  "raj",
+  "koothrappali",
+  "bernadette",
+  "rostenkowski",
+  "amy",
+  "farrah",
+  "fowler"
+];
+const michael = "michael g. scott";
 
 class App extends Component {
   state = {
     startHour: 9,
-    starMinute: 0,
-    workingHours: 8,
-    workingMinutes: 0,
+    startMinute: 0,
+    lengthHour: 8,
+    lengthMinute: 0,
     hoursDone: 0,
+    secondsDone: 0,
+    lunchValue: 0,
     hoursTotal: 9,
+    minutesTotal: 0,
     startDate: null,
     currentDate: null,
-    name: null
+    name: null,
+    lunch: false,
+    joke: null,
+    display: true,
+    phrase: null,
+    author: null,
+    quote: null,
+    play: false,
+    repeat: true,
+    pause: null
   };
+
+  audio = new Audio(music);
+
+  play = () => {
+    if (this.audio === null) {
+      this.audio = new Audio(music);
+    }
+    this.audio.loop = true;
+    this.setState({ play: true, pause: false });
+    this.audio.play();
+  };
+  stop = () => {
+    if (this.audio) {
+      this.audio.pause();
+    }
+    this.setState({ play: false, pause: false });
+    this.audio = null;
+  };
+  pause = () => {
+    if (this.audio) {
+      this.setState({ play: false, pause: true });
+      this.audio.pause();
+    }
+  };
+
   createCookie = (name, value, days) => {
     let expires = "";
     if (days) {
@@ -27,7 +101,6 @@ class App extends Component {
     }
     document.cookie = name + "=" + value + expires + "; path=/";
   };
-
   readCookie = name => {
     var nameEQ = name + "=";
     var ca = document.cookie.split(";");
@@ -38,28 +111,103 @@ class App extends Component {
     }
     return null;
   };
-
+  onClearName = () => {
+    this.eraseCookie("Name");
+    this.setState({
+      name: null,
+      phrase: null,
+      author: null,
+      quote: null
+    });
+    this.forceUpdate();
+  };
   eraseCookie = name => {
     this.createCookie(name, "", -1);
   };
+
   nameChangedHandler = e => {
     const name = e.target.value;
+    if (name.toLowerCase().includes("hangman")) {
+      this.props.history.push("/hangman");
+    }
+    let check = false;
+    for (let officeName of officeNames) {
+      if (name.toLowerCase().includes(officeName)) {
+        check = true;
+      }
+    }
+    let checkTbbt = false;
+    for (let tbbtName of tbbtNames) {
+      if (name.toLowerCase().includes(tbbtName)) {
+        checkTbbt = true;
+      }
+    }
+
+    const phrase = check ? "You miss 100% of the shots you don't take" : null;
+    const author = check ? ` ‒Michael Scott` : null;
+
+    this.setQuote({ check, phrase, author, name, checkTbbt });
+
     this.setState({
       name
     });
   };
-  onEnterHours = e => {
-    this.setState({
-      startHour: +e
-    });
-  };
-  onEnterLength = e => {
-    const workingHours = +e;
-    const hoursTotal = workingHours + 1;
-    this.setState({
-      workingHours,
-      hoursTotal
-    });
+  setQuote = ({
+    check,
+    phrase = null,
+    author = null,
+    name = "Stranger",
+    checkTbbt
+  }) => {
+    if (
+      (name.toLowerCase().includes("want") &&
+        name.toLowerCase().includes("easter") &&
+        name.toLowerCase().includes("egg")) ||
+      name.toLowerCase().includes("easter")
+    ) {
+      const uber = {
+        ...quotes,
+        ...quotes,
+        ...quotes,
+        ...quotesTBBT,
+        ...quotes
+      };
+      const random = Math.floor(
+        Math.random() * Object.keys(uber).length
+      ).toString();
+      const quote = uber[random];
+
+      this.setState({ quote, author, phrase });
+    } else if (check) {
+      const random = Math.floor(
+        Math.random() * Object.keys(quotes).length + 1
+      ).toString();
+      const quote =
+        name.toLowerCase().includes(michael) ||
+        name.toLowerCase().includes("michael scott")
+          ? null
+          : check
+          ? random === `${Object.keys(quotes).length}`
+            ? null
+            : quotes[random]
+          : null;
+
+      this.setState({ quote, author, phrase });
+    } else if (checkTbbt) {
+      const random = Math.floor(
+        Math.random() * Object.keys(quotesTBBT).length
+      ).toString();
+      const quote = checkTbbt
+        ? random === `${Object.keys(quotesTBBT).length}`
+          ? null
+          : quotesTBBT[random]
+        : null;
+
+      this.setState({ quote, author, phrase });
+    } else {
+      const [quote, author, phrase] = [null, null, null];
+      this.setState({ quote, author, phrase });
+    }
   };
   onEnterName = e => {
     e.preventDefault();
@@ -67,76 +215,190 @@ class App extends Component {
     this.createCookie("Name", value, 100);
     this.forceUpdate();
   };
-  onClearName = () => {
-    this.eraseCookie("Name");
-    this.forceUpdate();
+  getDate = () => {
+    const currentDate = new Date();
+    const c = currentDate;
+    const startDate = new Date(
+      c.getFullYear(),
+      c.getMonth(),
+      c.getDate(),
+      this.state.startHour,
+      this.state.startMinute,
+      0,
+      0
+    );
+    this.setState({ currentDate, startDate });
+  };
+  handleCookies = (
+    lengthHour = 8,
+    lengthMinute = 0,
+    startHour = 9,
+    startMinute = 0,
+    lunchValue = 1
+  ) => {
+    const lunch = lunchValue === 1 ? true : false;
+    const hoursTotal = lengthHour + lunchValue + lengthMinute / 60;
+    const minutesTotal = lengthMinute;
+    this.setState({
+      startMinute,
+      startHour,
+      lengthMinute,
+      lengthHour,
+      lunchValue,
+      lunch,
+      hoursTotal,
+      minutesTotal
+    });
+  };
+  createCookies = () => {
+    this.createCookie("startHour", this.state.startHour, 7);
+    this.createCookie("startMinute", this.state.startMinute, 7);
+    this.createCookie("lengthHour", this.state.lengthHour, 7);
+    this.createCookie("lengthMinute", this.state.lengthMinute, 7);
+    this.createCookie("lunchValue", this.state.lunchValue, 7);
+  };
+  calculate = () => {
+    const currentDate = new Date();
+    const { startDate } = this.state;
+    const secondsDone = (currentDate - startDate) / 1000;
+    const hoursDone = +(secondsDone / 3600).toFixed(3);
+    this.setState({ secondsDone, hoursDone });
   };
   handleButton = () => {
     this.getDate();
     this.calculate();
-    this.createCookie("startHour", this.state.startHour, 7);
-    this.createCookie("hoursTotal", this.state.hoursTotal, 7);
     const name = this.state.name ? this.state.name : "Stranger";
     if (!this.readCookie("Name")) {
       this.createCookie("Name", name, 7);
     }
     this.props.history.push("/time#intro");
   };
-  getDate = () => {
-    const currentDate = new Date();
-    const startDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      currentDate.getDate(),
-      this.state.startHour,
-      this.state.starMinute,
-      0,
-      0
-    );
-    const secondsDone = (currentDate - startDate) / 1000;
-    const displayDate = currentDate.toString().slice(0, -39);
-    this.setState({
-      displayDate,
-      currentDate,
-      startDate,
-      secondsDone
-    });
-  };
-  calculate = () => {
-    const currentDate = new Date();
-    const startDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      currentDate.getDate(),
-      this.state.startHour,
-      this.state.starMinute,
 
-      0,
-      0
+  handleSubmit = ({
+    startHour,
+    startMinute,
+    lengthHour,
+    lengthMinute,
+    lunch
+  }) => {
+    startHour = isNaN(startHour) ? 0 : startHour;
+    startMinute = isNaN(startMinute) ? 0 : startMinute;
+    lengthHour = isNaN(lengthHour) ? 0 : lengthHour;
+    lengthMinute = isNaN(lengthMinute) ? 0 : lengthMinute;
+    const lunchValue = lunch ? 1 : 0;
+    const hoursTotal = lengthHour + lunchValue + lengthMinute / 60;
+    const minutesTotal = lengthMinute;
+    this.setState(
+      {
+        startMinute,
+        startHour,
+        lengthMinute,
+        lengthHour,
+        lunch,
+        lunchValue,
+        hoursTotal,
+        minutesTotal
+      },
+      () => {
+        this.getDate();
+        this.createCookies();
+        this.calculate();
+        const name = this.state.name ? this.state.name : "Stranger";
+        if (!this.readCookie("Name")) {
+          this.createCookie("Name", name, 7);
+        }
+        this.props.history.push("/time#intro");
+      }
     );
-    const secondsDone = (currentDate - startDate) / 1000;
-    const hoursDone = +(secondsDone / 3600).toFixed(3);
-    this.setState({
-      secondsDone,
-      hoursDone
-    });
   };
-  handleCookies = (startHour, hoursTotal) => {
-    this.setState({
-      startHour,
-      hoursTotal
-    });
+
+  easterEgg = e => {
+    const code = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
+    const key = parseInt(e.which || e.detail);
+    if (key === code[index]) {
+      index++;
+
+      if (index === code.length) {
+        this.setState(prevState => ({ display: !prevState.display }));
+        index = 0;
+      }
+    } else {
+      index = 0;
+    }
   };
-  componentDidMount() {
+
+  checkMusic = () => {
+    console.log("check music");
     this.getDate();
     this.calculate();
+    const secondsTo = this.state.hoursTotal * 3600 - this.state.secondsDone;
+    if (
+      (secondsTo >= 480 && secondsTo <= 600) ||
+      this.state.hoursDone > this.state.hoursTotal
+    ) {
+      if (!this.state.play && !this.state.pause) {
+        this.play();
+      }
+    }
+  };
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  componentDidMount() {
+    this.interval = setInterval(() => {
+      this.checkMusic();
+    }, 30000);
+    let name;
+    try {
+      name = this.readCookie("Name");
+      name.toLowerCase();
+    } catch {
+      name = "Incognito";
+    }
+
+    let check = false;
+    for (let officeName of officeNames) {
+      if (name.toLowerCase().includes(officeName)) {
+        check = true;
+      }
+    }
+    let checkTbbt = false;
+    for (let tbbtName of tbbtNames) {
+      if (name.toLowerCase().includes(tbbtName)) {
+        checkTbbt = true;
+      }
+    }
+
+    const phrase = check ? "You miss 100% of the shots you don't take" : null;
+    const author = check ? ` ‒Michael Scott` : null;
+
+    this.setQuote({ check, phrase, author, name, checkTbbt });
+    axios({
+      method: "get",
+      url: "https://icanhazdadjoke.com/",
+      headers: {
+        Accept: "application/json"
+      }
+    }).then(res => {
+      const joke = res.data.joke;
+      this.setState({ joke });
+    });
   }
   render() {
+    const startHour = this.readCookie("startHour");
+    const startMinute = this.readCookie("startMinute");
+    const lengthHour = this.readCookie("lengthHour");
+    const lengthMinute = this.readCookie("lengthMinute");
+    const lunchValue = this.readCookie("lunchValue");
+    const cookie =
+      startHour && startMinute && lengthHour && lengthMinute && lunchValue;
     //this.eraseCookie('Name')
     const myHome = props => {
       return (
         <Home
-          handleCookies={this.handleCookies}
+          joke={this.state.joke}
           handleButton={this.handleButton}
           onClearName={this.onClearName}
           readCookie={this.readCookie}
@@ -144,6 +406,7 @@ class App extends Component {
           onEnterName={this.onEnterName}
           onEnterHours={this.onEnterHours}
           onEnterLength={this.onEnterLength}
+          handleSubmit={this.handleSubmit}
           {...this.state}
           {...props}
         />
@@ -152,6 +415,7 @@ class App extends Component {
     const myTime = props => {
       return (
         <Time
+          handleCookies={this.handleCookies}
           readCookie={this.readCookie}
           eraseCookie={this.eraseCookie}
           onClearName={this.onClearName}
@@ -159,38 +423,46 @@ class App extends Component {
           onEnterLength={this.onEnterLength}
           getDate={this.getDate}
           calculate={this.calculate}
+          onPlay={this.play}
+          onPause={this.pause}
+          onStop={this.stop}
+          audio={this.audio}
           {...this.state}
           {...props}
         />
       );
     };
-    const myTest = props => {
+    const myHangman = props => {
       return (
-        <Test
+        <Hangman
           readCookie={this.readCookie}
+          createCookie={this.createCookie}
           eraseCookie={this.eraseCookie}
-          onClearName={this.onClearName}
-          onEnterHours={this.onEnterHours}
-          onEnterLength={this.onEnterLength}
-          getDate={this.getDate}
-          calculate={this.calculate}
-          {...this.state}
           {...props}
         />
       );
     };
+
     let redirect = () => <Redirect to="/time" />;
     if (!this.readCookie("startHour")) {
-      redirect = () => <Redirect to="/home" />;
+      redirect = () => <Redirect to="/home#start" />;
     }
     return (
-      <div>
-        <Layout>
+      <div onKeyDown={e => this.easterEgg(e)} tabIndex="0">
+        <Layout
+          cookie={cookie}
+          play={this.state.play}
+          pause={this.state.pause}
+          onPlay={this.play}
+          onPause={this.pause}
+          onStop={this.stop}
+        >
           <Switch>
-            <Route path="/" exact render={redirect} />
             <Route path="/home" render={myHome} />
-            <Route path="/time" render={myTime} />
-            <Route path="/test" render={myTest} />
+            <Route path="/test" component={Test} />
+            <Route path="/hangman" render={myHangman} />
+            {cookie && <Route path="/time" render={myTime} />}
+            <Route render={redirect} />
           </Switch>
         </Layout>
       </div>

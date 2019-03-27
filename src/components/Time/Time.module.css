@@ -1,41 +1,90 @@
 .CookieText {
-    max-width: 50%;
-    text-align: center;
+  position: relative;
+  max-width: 50%;
+  text-align: center;
 }
-.CookieDiv{
+.notEnded .CookieText {
+  max-width: 100%;
+}
+.CookieDiv {
+  position: fixed;
+  bottom: 1%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  left: 18%;
+}
+.Display {
+  color: #f55;
+}
+.Left {
+  color: green;
+}
+.PlotContainer {
+}
+.Button {
+  margin: 5px;
+  padding: 8px 20px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  border-style: solid;
+  border: 1px solid gainsboro;
+  outline: none;
+  cursor: pointer;
+}
+.pTime {
+  margin: 16px 0px;
+}
+.ButtonErase {
+  margin: 5px;
+  padding: 8px 20px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  border-style: solid;
+  border: 1px solid gainsboro;
+  outline: none;
+  cursor: pointer;
+}
+.TimeFull {
+  min-height: 90vh;
+}
+@media (max-width: 800px) {
+  .Plot {
+    width: 100%;
+  }
+  .CookieText {
+    width: 90%;
+    max-width: 90%;
+  }
+
+  .notEnded {
+  display: flex;
+  flex-direction: column;
+  align-items: center
+  }
+  .Par {
+    width: 87%;
+    margin: 16px 0px;
+  }
+  .TimeCont {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #f4f4f4; 
-}
-.PlotContainer {
+  }
+  .br {
+    display: none;
+  }
+  .ButtonErase {
+    position: relative;
+  }
+  .CookieDiv,
+  .Buttons {
     background-color: #f4f4f4;
+  }
 }
-.Button{
-    margin: 5px;
-    padding: 8px 20px;
-    border-radius: 8px;
-    box-sizing: border-box;
-    border-style: solid;
-    border: 1px solid gainsboro;
-    outline: none;
-    cursor: pointer;
-}
-@media (max-width: 800px){
-    .Plot {
-        width: 100%;
-    }
-    .CookieText{
-        width: 90%;
-        max-width: 90%;
-    }
-    .Par {
-        width: 87%;
-        margin: 8px 0px;
-    }
-    .TimeCont{
-        display: flex;
-        flex-direction: column;
-        align-items: center; 
-    }
+@media (min-height: 880px) {
+  .CookieText {
+    position: fixed;
+    bottom: 4%;
+  }
 }

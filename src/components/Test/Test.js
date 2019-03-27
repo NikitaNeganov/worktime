@@ -1,113 +1,28 @@
-import React from "react";
+import React, { Component } from "react";
+import { interpolateColors } from "../../utils/utils";
 import classes from "./Test.module.css";
-import { Form, Field } from "react-final-form";
 
-const sleep = ms => new Promise(res => setTimeout(res, ms));
-const showResults = async values => {
-  await sleep(1500);
-  console.log(JSON.stringify(values, 0, 2));
-};
+class Test extends Component {
+  render() {
+    //const arr = interpolateColors("255,0,0", "91,150,27", 100);
+    const arr1 = interpolateColors("255,0,0", "255,184,0", 25);
+    const arr2 = interpolateColors("255,184,0", "255,141,0", 25);
+    const arr3 = interpolateColors("255,141,0", "91,150,27", 25);
+    const arr4 = interpolateColors("91,150,27", "4,163,11", 25);
+    const arr = [...arr1, ...arr2, ...arr3, ...arr4];
+    const colors = arr.map(color => {
+      return (
+        <div
+          key={color}
+          className={classes.Li}
+          style={{ color: `rgb(${color})` }}
+        >
+             61.54%
+        </div>
+      );
+    });
+    return <ul className={classes.Ul}>{colors}</ul>;
+  }
+}
 
-const test = () => (
-  <div className={classes.Home}>
-    <Form
-      onSubmit={showResults}
-      initialValues={{
-        startMinute: 30,
-        startHour: 10,
-        lengthMinute: 0,
-        lengthHour: 8
-      }}
-    >
-      {({ handleSubmit, submitting, values }) => (
-        <form onSubmit={handleSubmit}>
-          <p>Please, enter the time your job starts. You can omit minutes.</p>
-          <div className={classes.Start}>
-            <Field
-              className={classes.Input}
-              name="startHour"
-              placeholder="Hour"
-            >
-              {({ input, meta, placeholder, className }) => (
-                <div className={classes.InputWrapper}>
-                  <input
-                    pattern="[0-9]*"
-                    type="number"
-                    {...input}
-                    placeholder={placeholder}
-                    className={className}
-                  />
-                  {meta.error && meta.touched && <span>{meta.error}</span>}
-                </div>
-              )}
-            </Field>
-            <Field
-              className={classes.Input}
-              name="startMinute"
-              placeholder="Minute"
-            >
-              {({ input, meta, placeholder, className }) => (
-                <div className={classes.InputWrapper}>
-                  <input
-                    type="number"
-                    pattern="[0-9]*"
-                    {...input}
-                    placeholder={placeholder}
-                    className={className}
-                  />
-                  {meta.error && meta.touched && <span>{meta.error}</span>}
-                </div>
-              )}
-            </Field>
-          </div>
-          <p>Please, enter the length of your workday.</p>
-          <div className={classes.Length}>
-            <Field
-              className={classes.Input}
-              name="lengthHour"
-              placeholder="Hour"
-            >
-              {({ input, meta, placeholder, className }) => (
-                <div className={classes.InputWrapper}>
-                  <input
-                    type="number"
-                    pattern="[0-9]*"
-                    {...input}
-                    placeholder={placeholder}
-                    className={className}
-                  />
-                  {meta.error && meta.touched && <span>{meta.error}</span>}
-                </div>
-              )}
-            </Field>
-            <Field
-              className={classes.Input}
-              name="lengthMinute"
-              placeholder="Minute"
-            >
-              {({ input, meta, placeholder, className }) => (
-                <div className={classes.InputWrapper}>
-                  <input
-                    {...input}
-                    placeholder={placeholder}
-                    className={className}
-                    pattern="[0-9]*"
-                    type="number"
-                  />
-                  {meta.error && meta.touched && <span>{meta.error}</span>}
-                </div>
-              )}
-            </Field>
-          </div>
-
-          <button disabled={submitting} type="submit">
-            Sumbit
-          </button>
-          <pre>{JSON.stringify(values, undefined, 2)}</pre>
-        </form>
-      )}
-    </Form>
-  </div>
-);
-
-export default test;
+export default Test;
