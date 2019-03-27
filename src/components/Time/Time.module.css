@@ -3,10 +3,16 @@
   max-width: 50%;
   text-align: center;
 }
+.notEnded .CookieText {
+  max-width: 100%;
+}
 .CookieDiv {
+  position: fixed;
+  bottom: 1%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  left: 18%;
 }
 .Display {
   color: #f55;
@@ -38,11 +44,9 @@
   border: 1px solid gainsboro;
   outline: none;
   cursor: pointer;
-  position: fixed;
-  bottom: 1%;
 }
 .TimeFull {
-  min-height: 92.5vh;
+  min-height: 90vh;
 }
 @media (max-width: 800px) {
   .Plot {
@@ -51,6 +55,12 @@
   .CookieText {
     width: 90%;
     max-width: 90%;
+  }
+
+  .notEnded {
+  display: flex;
+  flex-direction: column;
+  align-items: center
   }
   .Par {
     width: 87%;

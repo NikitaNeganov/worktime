@@ -3,6 +3,7 @@ import Plot from "react-plotly.js";
 import classes from "./Time.module.css";
 import music from "../../assets/closing time.mp3";
 import { interpolateColors } from "../../utils/utils";
+import cx from 'classnames';
 
 class Time extends Component {
   //state = {
@@ -25,26 +26,7 @@ class Time extends Component {
     this.props.onClearName();
     this.props.history.push("/home");
   };
-  //play = () => {
-  //  if (this.audio === null) {
-  //    this.audio = new Audio(music);
-  //  }
-  //  this.setState({ play: true, pause: false });
-  //  this.audio.play();
-  //};
-  //stop = () => {
-  //  if (this.audio) {
-  //    this.audio.pause();
-  //  }
-  //  this.setState({ play: false, pause: false });
-  //  this.audio = null;
-  //};
-  //pause = () => {
-  //  if (this.audio) {
-  //    this.setState({ play: false, pause: true });
-  //    this.audio.pause();
-  //  }
-  //};
+
   update = () => {
     this.props.getDate();
     this.props.calculate();
@@ -90,19 +72,19 @@ class Time extends Component {
     const margin =
       document.body.clientHeight < 700
         ? {
-            b: 0,
-            l: 0,
-            r: 0,
-            t: 80,
-            pad: 0
-          }
+          b: 0,
+          l: 0,
+          r: 0,
+          t: 80,
+          pad: 0
+        }
         : {
-            b: 20,
-            l: 40,
-            r: 40,
-            t: 120,
-            pad: 40
-          };
+          b: 20,
+          l: 40,
+          r: 40,
+          t: 120,
+          pad: 40
+        };
 
     //#1 getting how much time done
     const currentTime = new Date().toLocaleString("ru-RU");
@@ -116,8 +98,8 @@ class Time extends Component {
       parseInt(minutes) < 60 && parseInt(minutes) > 0
         ? `${minutes.toString()} ${minuteRemainder}`
         : parseInt(fullHours) > 0
-        ? ""
-        : "less than a minute";
+          ? ""
+          : "less than a minute";
     const hourRemainder = parseInt(fullHours) === 1 ? "hour" : "hours";
     let displayTime =
       this.props.hoursDone < 1
@@ -237,12 +219,15 @@ class Time extends Component {
             }}
           />
         </div>
-        <div className={classes.CookieDiv}>
+        <div className={classes.notEnded}>
           <button className={classes.Button} onClick={this.erase}>
             Erase cookies
           </button>
-          <p className={classes.CookieText + " " + classes.pTime}>
-            Site has saved your preferences (start time and workday length) in
+          <p className={cx(
+            classes.CookieText,
+            classes.pTime,
+          )}>
+            Site has saved your preferences in
             cookies. In order to redirect to Home page and change your
             preferences click "Erase cookies".
           </p>
@@ -261,7 +246,7 @@ class Time extends Component {
               Erase cookies
             </button>
             <p className={classes.CookieText + "" + classes.pTime}>
-              Site has saved your preferences (start time and workday length) in
+              Site has saved your preferences in
               cookies. In order to access Home page again and change your
               preferences click "Erase cookies".
             </p>
@@ -284,7 +269,7 @@ class Time extends Component {
               Erase cookies
             </button>
             <p className={classes.CookieText + " " + classes.pTime}>
-              Site has saved your preferences (start time and workday length) in
+              Site has saved your preferences in
               cookies. In order to access Home page again and change your
               preferences click "Erase cookies".
             </p>

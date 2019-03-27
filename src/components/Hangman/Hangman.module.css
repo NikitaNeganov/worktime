@@ -1,8 +1,8 @@
 .Container {
-  min-height: 92.5vh;
   display: flex;
   align-items: center;
   flex-direction: column;
+  min-height: 80vh;
 }
 .SpinnerWrap {
   margin-top: 15%;

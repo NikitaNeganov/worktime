@@ -1,13 +1,15 @@
 import React, { PureComponent } from "react";
 import ReactDOM from "react-dom";
-//import axios from "axios";
-
-import classes from "./Hangman.module.css";
-import { en, ru } from "../../assets/alphabets";
-import { array as hangmanWords } from "../../assets/hangman";
+import axios from "axios";
 import Spinner from "../UI/Spinner/Spinner";
 import LetterList from "./LetterList/LetterList";
+
+import { en, ru } from "../../assets/alphabets";
+import { array as hangmanWords } from "../../assets/hangman";
 import HangmanPic from "./HangmanPic/HangmanPic";
+
+import classes from "./Hangman.module.css";
+
 
 const spinner = (
   <div className={classes.SpinnerWrap}>
@@ -109,14 +111,17 @@ class Hangman extends PureComponent {
       }
       return temp;
     });
+
     this.setState({ en });
     const guessed = this.state.guessed;
     const indices = [];
+
     this.state.secret.forEach((el, i) => {
       if (letter === el) {
         indices.push([i, el]);
       }
     });
+
     if (indices.length > 0) {
       for (let index of indices) {
         guessed[index[0]] = index[1];
@@ -128,16 +133,19 @@ class Hangman extends PureComponent {
         });
       }
     }
+
     if (!this.state.tried.includes(letter)) {
       const tried = this.state.tried;
       tried.push(letter);
       this.setState({ tried });
     }
+
     this.setState({ guessed });
     const check =
       JSON.stringify(this.state.secret) === JSON.stringify(this.state.guessed);
     if (this.state.mistakes === this.state.maxmistakes || check) {
       let message = "";
+
       if (check) {
         message = "You win!";
         this.setState({ result: "win" });
@@ -145,11 +153,12 @@ class Hangman extends PureComponent {
         message = "You lose!";
         this.setState({ result: "lose" });
       }
-      this.setState({ message, playing: false, en }, () => {});
+      this.setState({ message, playing: false, en }, () => { });
       let [wins, losses] = [
         parseInt(this.props.readCookie("wins")),
         parseInt(this.props.readCookie("losses"))
       ];
+
       if (check) {
         wins += 1;
       } else {
@@ -159,7 +168,7 @@ class Hangman extends PureComponent {
     }
   };
 
-  getWord = () => {
+  getWord = async () => {
     //axios.post("../../assets/wordnik.py").then(res => console.log(res));
     const name = this.props.readCookie("Name")
       ? this.props.readCookie("Name")
@@ -168,14 +177,15 @@ class Hangman extends PureComponent {
       name.toLowerCase().includes("ros") || name.toLowerCase().includes("рос");
     const word = nameCheck
       ? "ros-pidor"
-      : hangmanWords[Math.floor(Math.random() * 500)].toLowerCase();
-    setTimeout(() => {
-      this.setState({
-        word: word,
-        secret: word.split(""),
-        guessed: word.split("").map(el => "_")
-      });
-    }, 500);
+      : await axios.get('https://api.wordnik.com/v4/words.json/randomWord?api_key=ef42b1d3b8ac44b7ab125261396023a69d0a09b697265da09')//  hangmanWords[Math.floor(Math.random() * 500)].toLowerCase();
+        .then(res => res.data.word);
+
+    this.setState({
+      word: word,
+      secret: word.split(""),
+      guessed: word.split("").map(el => "_")
+    });
+
   };
 
   render() {
@@ -246,8 +256,8 @@ class Hangman extends PureComponent {
                 ) : parseInt(winCookie) === parseInt(loseCookie) ? (
                   <p>You should try better :)</p>
                 ) : (
-                  <p>You suck!</p>
-                )}
+                      <p>You suck!</p>
+                    )}
               </pre>
             </div>
           )}
